@@ -3,6 +3,7 @@
  * 用于登录，登录之后cookie保存到服务器数据库用于爬之后的数据
  * 本文件的请求使用POST，传递学号(username)和密码(passwd)
  * 响应1或者2，1=成功/2=失败
+ *
  */
 
 require 'lib/url.php';
