@@ -1,0 +1,9 @@
+<?php
+/**
+ * 数据库配置文件
+ */
+define('DB_HOST', 'p:example.com');
+define('DB_PORT', '3306');//默认是3306
+define('DB_USER', 'db_user');
+define('DB_PASS', 'db_pass');
+define('DB_NAME', 'db_name');
