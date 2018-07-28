@@ -9,6 +9,7 @@ require 'lib/url.php';
 require '3rd_lib/simple_html_dom.php';
 require 'lib/dbconf.php';
 //require 'for_debug.php';//方便调试的时候使用
+require 'lib/checkstr.php';
 
 define('SALT', 'asjhujkdsnlkjsglkjvndlkKHSAHDNkndvdowl.swjNJKFi');//hash盐
 
@@ -34,6 +35,12 @@ if ($db->connect_errno) {
     exit;
 }
 
+//检测用户输入
+if(!check_username($_POST['username'])){
+    echo err(3);
+    exit;
+}
+
 //URL
 define('URL', 'http://idas.uestc.edu.cn/authserver/login');
 define('CapURL', 'http://idas.uestc.edu.cn/authserver/needCaptcha.html?username=' . $_POST['username'] . '&_=');
@@ -43,7 +50,7 @@ define('CapIMGURL', 'http://idas.uestc.edu.cn/authserver/captcha.html');
 $html = new simple_html_dom();
 $response = get(URL);
 $cookie_str = '';//提取cookie字符串
-if ($_POST['code'] == 2) {//携带验证码，从数据库提取cookie
+if ($_POST['code'] == '2') {//携带验证码，从数据库提取cookie
     $query_res = $db->query(
         "SELECT `token`,`idas_cookie` FROM `user_info` WHERE `student_number`='{$_POST["username"]}'"
     )->fetch_all();
