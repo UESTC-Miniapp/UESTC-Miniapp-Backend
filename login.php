@@ -8,7 +8,7 @@
 require 'lib/url.php';
 require '3rd_lib/simple_html_dom.php';
 require 'lib/dbconf.php';
-//require 'for_debug.php';//方便调试的时候使用
+require 'for_debug.php';//方便调试的时候使用
 require 'lib/checkstr.php';
 
 define('SALT', 'asjhujkdsnlkjsglkjvndlkKHSAHDNkndvdowl.swjNJKFi');//hash盐
