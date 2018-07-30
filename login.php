@@ -6,10 +6,11 @@
  */
 
 require 'lib/url.php';
-require '3rd_lib/simple_html_dom.php';
+require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/dbconf.php';
-require 'for_debug.php';//方便调试的时候使用
 require 'lib/checkstr.php';
+//require 'for_debug.php';//方便调试的时候使用
+require 'lib/eams_login.php';
 
 define('SALT', 'asjhujkdsnlkjsglkjvndlkKHSAHDNkndvdowl.swjNJKFi');//hash盐
 
@@ -36,7 +37,7 @@ if ($db->connect_errno) {
 }
 
 //检测用户输入
-if(!check_username($_POST['username'])){
+if (!check_username($_POST['username'])) {
     echo err(3);
     exit;
 }
@@ -132,7 +133,7 @@ $res = post(URL, $data, $cookie_str);
 
 if ($res['status'] == '302') {
     //print_r($res['cookie']);
-    //登录成功，跟随跳转，cookie写入数据库
+    //登录成功，继续登录eams，cookie写入数据库
     $iPlanetDirectoryPro = '';
     foreach ($res['cookie'] as $key => $value) {//提取cookie字符串
         //iPlanetDirectoryPro单独处理
@@ -143,9 +144,22 @@ if ($res['status'] == '302') {
         $cookie_str = $key . '=' . $value . ';' . $cookie_str;
     }
     //$new_loc = $res['head']['Location'];//暂时不需要处理302跳转
-    if (!$iPlanetDirectoryPro) {//如果没有这个域名，估计是有问题的，为了稳定性
+    if (!$iPlanetDirectoryPro) {//如果没有这个cookie，估计是有问题的，为了稳定性
         echo err(5);
         exit;
+    }
+
+    //eams登录
+    $new_cookies = eams_login($cookie_str, $iPlanetDirectoryPro);
+    if ($new_cookies == null) {
+        echo err(5);
+        exit;
+    }
+    if ($new_cookies['idas'] != '') {
+        preg_replace('/JSESSIONID\_ids\d\=.*;/', $new_cookies['idas'] . ';', $cookie_str);//替换新版
+    }
+    if ($new_cookies['iplan'] != '') {
+        $iPlanetDirectoryPro = $new_cookies['iplan'];
     }
 
     $token = hash('sha256',
@@ -161,12 +175,13 @@ if ($res['status'] == '302') {
             "UPDATE `user_info` SET " .
             "`idas_cookie`='{$cookie_str}'," .//idas.uestc.edu.cn子域
             "`uestc_cookie`='{$iPlanetDirectoryPro}'," .//uestc.edu.cn主域
-            "`token`='{$token}' " .
+            "`token`='{$token}'," .
+            "`eams_cookie`='{$new_cookies['eams']}' " .
             "WHERE `student_number`='{$_POST["username"]}'"
         );
     else
         $db->query(
-            "INSERT INTO `user_info` (`student_number`,`token`,`idas_cookie`,`uestc_cookie`) VALUES ('{$_POST["username"]}','{$token}','{$cookie_str}','{$iPlanetDirectoryPro}')"
+            "INSERT INTO `user_info` (`student_number`,`token`,`idas_cookie`,`uestc_cookie`,`eams_cookie`) VALUES ('{$_POST["username"]}','{$token}','{$cookie_str}','{$iPlanetDirectoryPro}','{$new_cookies['eams']}')"
         );
 
     //echo $token;
@@ -175,11 +190,10 @@ if ($res['status'] == '302') {
         'token' => $token
     ));
 } elseif ($res['status'] == '200') {//登录失败，密码错误或者需要验证码，读取cpatchaDiv
-
-    //这里需要重写
     if (strpos($res['body'], 'id="msg"')) {//错误消息的提示
         //$pos1 = strpos($res['body'], 'id="msg"');
         //strpos($res['body'], '>', strpos($res['body'], 'id="msg"'));
+        //这里有机会的话就重写一下吧，略难看
         $msg = substr($res['body'],
             strpos($res['body'], '>', strpos($res['body'], 'id="msg"')) + 1,
             strpos($res['body'], '</span>', strpos($res['body'], 'id="msg"')) -

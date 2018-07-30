@@ -6,6 +6,7 @@
 require 'lib/checkstr.php';
 require 'lib/url.php';
 require 'lib/dbconf.php';//数据库相关
+require 'lib/3rd_lib/simple_html_dom.php';
 //require 'for_debug/check_token-debug.php';
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST')
@@ -36,7 +37,19 @@ $cookie_arr = $db->query(
 if ($cookie_arr && $cookie_arr[2] == $_POST['token']) {//没找到||不一致
     //$cookie_str = $cookie_arr[0].';'.$cookie_arr[1];
     //$res = get(URL,$cookie_str);
-
+    $res_body = get(URL,$cookie_arr[0].';'.$cookie_arr[1],true)['body'];
+    $html = new simple_html_dom();
+    $html->load($res_body);
+    $title = $html->find('title',0);
+    if($title->innertext()=='电子科技大学登录'){
+        echo 2;
+        exit;
+    }
+    else{
+        echo 1;
+        exit;
+    }
+    /*
     if(get(URL,$cookie_arr[0].';'.$cookie_arr[1])['status']=='200'){
         echo 1;
         exit;
@@ -45,6 +58,7 @@ if ($cookie_arr && $cookie_arr[2] == $_POST['token']) {//没找到||不一致
         echo 2;
         exit;
     }
+    */
 }
 else{
     echo 3;
