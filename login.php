@@ -87,8 +87,7 @@ if (get(CapURL . (string)time() . '000')['body'] != "false\n") {//需要验证�
     if ($_POST['code'] == 1) {
         //cookie存入数据库，响应code=2,token,content
         $token = hash('sha256',
-            hash('sha256',
-                $cookie_str . (string)time() . $_POST['username'] . SALT));//生成token
+            $cookie_str . (string)time() . $_POST['username'] . SALT);//生成token
         //检测数据库是否存在此学号
         if ($db->query(
             "SELECT 1 FROM `user_info` WHERE `student_number`='{$_POST["username"]}' LIMIT 1")
@@ -163,8 +162,7 @@ if ($res['status'] == '302') {
     }
 
     $token = hash('sha256',
-        hash('sha256',
-            $cookie_str . (string)time() . $_POST['username'] . SALT));//生成token
+        $cookie_str . (string)time() . $_POST['username'] . SALT);//生成token
 
     //检测数据库是否存在此学号
     if ($db->query(

@@ -1,6 +1,46 @@
-# UESTClife小程序后端
+# UESTClife小程序后端开发日志
 这并不是readme，而是灌水用的日记。
 请不要指望在此找到任何有价值的内容。
+接口文档去看API.md。
+## 2018-08-1
+计算token那一段感觉需要再处理下，
+只计算一轮hash就可以了。
+---
+另外就是目前token并没有防爆破，
+也没设置过期时间。
+---
+关于读取成绩信息，请求的URL为
+```
+http://eams.uestc.edu.cn/eams/teach/grade/course/person!search.action?semesterId=xxx&projectType=&_=xxx
+```
+显然，有三个参数
+- `semesterId`=学期（比如2017-2018第二学期=183）
+- `projectType`=留空
+- `_`=当前时间（unix时间戳，毫秒）
+同时，提交的cookie也多了一个`semester.id`，
+从数值上看应该是与`semesterId`一致的。
+当然这个值是通过Set-Cookie获取的，
+所以我只能从经验来判断规律了。
+---
+学长说他会把`semesterId`通过post提交上来，
+那我就不关心那玩意了。
+---
+还有一种情况就是，读取默认学期。
+比如正常浏览的时候会发现，虽然有2018-2019学年第1学期，
+但是系统默认并不会跳转到那个位置，
+而是给出了2017-2018学年第2学期。  
+从加载的情况来看，应该是这个URL的作用
+```
+http://eams.uestc.edu.cn/eams/teach/grade/course/person.action
+```
+在不提交`semester.id`这个cookie的情况下，
+该URL的响应包含Set-Cookie。
+当然就是`semester.id`。
+它的值应该就是那个默认的学年学期。
+
+## 2018-07-31
+域名还没备案，无法接入微信。
+
 ## 2018-07-30
 目前还是决定用这个URL来检测登录
 ```
