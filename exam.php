@@ -1,7 +1,8 @@
 <?php
 /**
- * 读取成绩信息
+ * 读取考试信息
  */
+
 if (!require_once 'lib/url.php')
     require 'lib/url.php';
 if (!require_once 'lib/dbconf.php')
@@ -10,9 +11,9 @@ if (!require_once 'lib/checkstr.php')
     require 'lib/checkstr.php';
 if (!require_once 'lib/table2json.php')
     require 'lib/table2json.php';
-if(!require_once 'lib/check_eams.php')
+if (!require_once 'lib/check_eams.php')
     require 'lib/check_eams.php';
-require 'for_debug/grade-debug.php';//仅用于调试
+require 'for_debug/exam-debug.php';//仅用于调试
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST')
     exit;
@@ -24,7 +25,8 @@ function err($code)
 
 if (!(array_key_exists('username', $_POST) &&
     array_key_exists('token', $_POST) &&
-    array_key_exists('semesterId',$_POST))) {
+    array_key_exists('semesterId', $_POST) &&
+    array_key_exists('examTypeId', $_POST))) {
     echo err(4);
     exit;
 }
@@ -59,22 +61,30 @@ if ($query_res[0] != $_POST['token']) {
     exit;
 }
 $cookie_str = $query_res[2] . ';' . $query_res[1];
-if(!check_eams($cookie_str)){
+if (!check_eams($cookie_str)) {
     echo err(2);
     exit;
 }
+//以上基本都是抄grade.php的，我觉得甚至可以写个库
 
 if ($_POST['semesterId'] != '') {
-    define('GRADE_URL',
-        'http://eams.uestc.edu.cn/eams/teach/grade/course/person!search.action?semesterId=' .
-        $_POST['semesterId'] . '&projectType=&_=' . (string)time() . '000');
-} else {//读取默认学期
-    define('GRADE_URL',
-        'http://eams.uestc.edu.cn/eams/teach/grade/course/person!search.action?semesterId=' .
-        get('http://eams.uestc.edu.cn/eams/teach/grade/course/person.action', $cookie_str)['cookie']['semester.id']
-        . '&projectType=&_=' . (string)time() . '000');
+    define('EXAM_URL',
+        'http://eams.uestc.edu.cn/eams/stdExamTable!examTable.action?semester.id=' .
+        $_POST['semesterId'] .
+        '&examType.id=' .
+        $_POST['examTypeId'] .
+        '&_=' .
+        (string)time() . '000');
+} else {
+    define('EXAM_URL',
+        'http://eams.uestc.edu.cn/eams/stdExamTable!examTable.action?semester.id=' .
+        get('http://eams.uestc.edu.cn/eams/stdExamTable.action', $cookie_str)['cookie']['semester.id'] .
+        '&examType.id=' .
+        $_POST['examTypeId'] .
+        '&_=' .
+        (string)time() . '000');
 }
-$res = get(GRADE_URL, $cookie_str);
+$res = get(EXAM_URL, $cookie_str);
 if ($res['status'] != 200) {
     echo err(3);
     exit;
@@ -82,5 +92,5 @@ if ($res['status'] != 200) {
 
 echo json_encode(array(
     'code' => '1',
-    'content' => t2j($res['body'])
+    'content' => t2jE($res['body'])
 ));
