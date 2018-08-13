@@ -1,28 +1,34 @@
-# 客户端连接说明
+# UESTC-Life API 接口文档
+
 首先，如果响应为空，一律视为错误。  
 其次，所有响应json的情况，
 无论是Array还是Object，都是字符串，没有数字。
-## 登录
+
+### 登录页
+
 登录可以用于验证学号和密码。
-- （表一）属性：
 
-属性|属性值|备注
-:---:|:---:|:---:
-URL|login.php|/
-method|POST|/
-响应格式|JSON|见下
-- （表二）请求参数：
+#### `login.php` - `POST`  
 
-参数名|参数值|备注
-:---:|:---:|:---:
-code|{ 1 , 2 }|1=直接登录，2=使用验证码
-username|学号|/
-passwd|密码|/
-cap|验证码|可选，code=2时有效
-- 响应：
-响应包括状态码（code）和内容（content）  
-如果code=1或者code=2的话，还会携带一个token  
-（表三）状态码
+**@request:**  
+```js
+{
+  username: String,
+  passwd: String,
+  cap: String // 可选，字段为空则不发送验证码
+}
+```
+
+**@return:**  
+```js
+{
+  success: Boolean,
+  error_code: Number, // 在这里列举错误码
+  error_msg: String, // 用于返回错误详情
+  cap_img: String, // 可选，base64编码后的验证码图片，如果直接登录成功，该字段为空
+  token: String // 如果登录成功，则返回token，如果需要验证码，该字段为空
+}
+```
 
 状态码|含义|备注
 :---:|:---:|:---:
