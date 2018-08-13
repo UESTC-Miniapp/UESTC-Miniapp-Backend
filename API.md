@@ -1,15 +1,16 @@
 # UESTC-Life API 接口文档
 
 1. 禁止返回值为空值，响应的请求里面最少要包括`success`，`error_code`，`error_msg`三个值，允许后两者为`null`；
-2. 区分响应值中的字符串和数字，不要使用字符串来传递数值型数据。
+2. 区分响应值中的字符串和数字，不要使用字符串来传递数值型数据；
+3. 如无特殊说明，所有请求返回值均为`JSON`。
 
 ### 登录页
 
 登录可以用于验证学号和密码。
 
-#### `login.php` - `POST`  
+#### 登录 - `login.php` - `POST`  
 
-**@request:**  
+@request:  
 ```js
 {
   username: String,
@@ -18,7 +19,7 @@
 }
 ```
 
-**@return:**  
+@return:  
 ```js
 {
   success: Boolean,
@@ -31,34 +32,33 @@
 
 状态码|含义|备注
 :---:|:---:|:---:
-1|正常登录|/
-2|需要验证码|验证码图片通过bae64转换后放置在content中
-3|学号或密码错误|/
-4|验证码错误|/
-5|后端系统错误|/
-6|请求错误|一般是错误的code
-7|token错误|这种情况最好是重新登录吧
-## 检测token
+101|正常登录|/
+102|需要验证码|验证码图片通过bae64转换后放置在content中
+103|学号或密码错误|/
+104|验证码错误|/
+105|后端系统错误|/
+106|请求错误|一般是错误的code
+107|token错误|这种情况最好是重新登录吧
+#### 检测token有效性 - `check_token.php` - `POST`
 用于确认token所属的cookie是否有效
-- （表一）属性：
 
-属性|属性值|备注
-:---:|:---:|:---:
-URL|check_token.php|/
-method|POST|/
-响应格式|JSON|见下
-- （表二）请求参数：
+@request:
+```js
+{
+  username: String, // 学号
+  token: String // 用于校验的token
+}
+```
 
-参数名|参数值|备注
-:---:|:---:|:---:
-username|学号|/
-token|废话|/
-- （表三）响应：
-响应是一个数字，
-1=cookie依然有效
-2=cookie已经失效
-3=验证错误（token与username不一致或者没有这个学号）
-4=服务器系统错误（一般是数据库没连上）
+@return:
+```js
+{
+  token_is_availabe: Boolean, // token是否有效
+  success: Boolean,
+  error_code: Number, 201. 验证失败 202. 未知错误
+  error_msg: String
+}
+```
 ## 成绩信息
 读取成绩信息需要提交学号、token和semesterId。
 - （表一）属性
