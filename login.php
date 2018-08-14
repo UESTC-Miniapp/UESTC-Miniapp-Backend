@@ -10,7 +10,7 @@ require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/dbconf.php';
 require 'lib/checkstr.php';
 require 'lib/err_msg.php';
-require 'for_debug.php';//方便调试的时候使用
+//require 'for_debug.php';//方便调试的时候使用
 require 'lib/eams_login.php';
 
 define('SALT', 'asjhujkdsnlkjsglkjvndlkKHSAHDNkndvdowl.swjNJKFi');//hash盐
