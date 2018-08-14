@@ -94,8 +94,36 @@
 }
 ```
 
-#### 课程表 - `[TODO]` - `POST`
+#### 课程表 - `timetable.php` - `POST`
+获取课程表。
 
+@request:
+```js
+{
+  token: String,
+  username: String,
+  semesterId: String // 学年代号，为空时默认返回最近学年课程表信息
+}
+```
+
+@return:
+```js
+{
+  success: Boolean,
+  error_code: Number,
+  error_msg: String,
+  data: [{
+    course_id: String, // 课程序号
+    course_name: String, // 课程名称
+    date: String, // 排课周时间，比如"1到19周单周"、"1到5周双周"等
+    room: String, // 上课地点，比如"品A105"
+    time: Array, // 上课时间，比如：[[0, 1], [0, 2]]就表示周一的上午一二节课，这个数据可以直接从js中解析
+    teacher: String, // 授课老师
+  }, 
+  // ...
+  ]
+}
+```
 
 #### 考试信息 - `exam.php` - `POST`
 读取考试信息需要提交学号、token和semesterId。
