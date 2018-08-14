@@ -59,86 +59,72 @@
   error_msg: String
 }
 ```
-## 成绩信息
+#### 获取成绩信息 - `grade.php` - `POST`
 读取成绩信息需要提交学号、token和semesterId。
-- （表一）属性
 
-属性|属性值|备注
-:---:|:---:|:---:
-URL|grade.php|/
-method|POST|/
-响应格式|JSON|不包含标题
-- （表二）请求参数：
-
-参数名|参数值|备注
-:---:|:---:|:---:
-username|学号|/
-token|你懂的|/
-semesterId|学年学期|可以为空，但必须要有
-
-- 响应：  
-响应的格式是一个json字符串，
-包含状态码code和内容content。
-如果正常的话，code=1，
-content的内容是一个二维json，两个纬度都是Array，
-不包含标题。
-如果code不为1，则没有content。
-标题是固定的
+@request:
+```js
+{
+  token: String,
+  username: String,
+  semesterId: String // 学年代号，为空时默认返回最近学年成绩信息
+}
 ```
-学年学期|课程代码|课程序号|课程名称|课程类别|学分|总评成绩|补考总评|最终|绩点
+
+@return:
+```js
+{
+  success: Boolean,
+  error_code: Number, // 201. token验证失败 202. 未知错误 203. 验证失败
+  error_msg: String,
+  data: [{
+    semester: String, // 学年学期
+    course_code: String, // 课程代码
+    course_id: String, // 课程序号
+    course_name: String, // 课程名称
+    course_type: String, // 课程类别
+    point: Number, // 学分
+    grade: Number, // 总评成绩
+    makeup_grade: Number, // 补考总评
+    final_grade: Number, // 最终成绩
+    gpa: Number // 绩点
+  }, 
+  // ...
+  ]
+}
 ```
-- （表三）响应状态码：
 
-状态码|含义|备注
-:---:|:---:|:---:
-1|正常|/
-2|token错误|建议重新登录
-3|系统错误|一般是数据库没连上
-4|请求错误|一般是没提供username或者token
-
-## 课程表
+#### 课程表 - `[TODO]` - `POST`
 
 
-## 考试信息
-
+#### 考试信息 - `exam.php` - `POST`
 读取考试信息需要提交学号、token和semesterId。
-- （表一）属性
 
-属性|属性值|备注
-:---:|:---:|:---:
-URL|exam.php|/
-method|POST|/
-响应格式|JSON|包含标题
-- （表二）请求参数：
-
-参数名|参数值|备注
-:---:|:---:|:---:
-username|学号|/
-token|你懂的|/
-semesterId|学年学期|可以为空，但必须要有
-examTypeId|考试类型|1=期末考试，2=期中考试，3=补考，4=缓考
-- 响应：  
-响应的格式是一个json字符串，
-包含状态码（code）和内容（content）。
-当然如果出错的话就只有状态码没有内容。
-为了节省空间，
-在content中使用array而不是object，
-毕竟用object的话，key都是一样的。
-有些考试会有`[考试情况未发布]`，
-那么对应的字段就是空串，
-所以每个array的长度固定。
-第一个数字将提示是否为未发布，  
-`0` = 未发布  
-`1` = 正常
-
-正常的情况是  
-`课程序号|课程名称|考试日期|考试安排|考试地点|座位号|考试情况|其它说明`  
-而出现未发布的话，一般从`考试日期`到`考试情况`。
-- （表三）响应状态码：
-
-状态码|含义|备注
-:---:|:---:|:---:
-1|正常|/
-2|token错误|建议重新登录
-3|系统错误|一般是数据库没连上
-4|请求错误|一般是没提供username或者token
+@request:
+```js
+{
+  token: String,
+  username: String,
+  semesterId: String, // 学年代号，为空时默认返回最近学年成绩信息
+  examTypeId: Number // 考试类型，1. 期末考试 2. 期中考试 3. 补考 4. 缓考
+}
+```
+@return:
+```js
+{
+  success: Boolean,
+  error_code: Number,
+  error_msg: String,
+  data: [{
+    status: Boolean, // true. 正常 false. 未发布
+    course_id: String, // 课程序号
+    course_name: String, // 课程名称
+    date: String, // 考试日期
+    address: String, // 考试地点
+    number: String, // 座位号
+    detail: String, // 考试情况
+  }, 
+  // ...
+  ]
+}
+```
