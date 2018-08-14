@@ -15,7 +15,8 @@
 {
   username: String,
   passwd: String,
-  cap: String // 可选，字段为空则不发送验证码
+  cap: String, // 可选，字段为空则不发送验证码
+  token: String //如果有cap，则为必须项
 }
 ```
 
@@ -32,12 +33,11 @@
 
 状态码|含义|备注
 :---:|:---:|:---:
-101|正常登录|/
 102|需要验证码|验证码图片通过bae64转换后放置在cap_img
 103|学号或密码错误|/
 104|验证码错误|/
-105|后端系统错误|/
-106|请求错误|一般是错误的code
+105|后端系统错误|一般是数据库挂了
+106|请求错误|一般是没有username或者passwd
 107|token错误|这种情况最好是重新登录吧
 #### 检测token有效性 - `check_token.php` - `POST`
 用于确认token所属的cookie是否有效
@@ -53,7 +53,7 @@
 @return:
 ```jsonc
 {
-  token_is_availabe: Boolean, // token是否有效
+  token_is_available: Boolean, // token是否有效
   success: Boolean,
   error_code: Number, 201. 验证失败 202. 未知错误
   error_msg: String
@@ -75,7 +75,7 @@
 ```jsonc
 {
   success: Boolean,
-  error_code: Number, // 201. token验证失败 202. 未知错误 203. 验证失败
+  error_code: Number, // 201. token验证失败 202. 未知错误
   error_msg: String,
   data: [{
     semester: String, // 学年学期
