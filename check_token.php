@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 }
 if(!(array_key_exists('username',$_POST)&&
     array_key_exists('token',$_POST))){
-    echo arr(203);
+    echo err(203);
     exit;
 }
 if (!check_username($_POST['username'])) {
