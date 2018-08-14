@@ -2,6 +2,34 @@
 这并不是readme，而是灌水用的日记。
 请不要指望在此找到任何有价值的内容。
 接口文档去看API.md。
+## 2018-08-06
+课程表内容在js中，
+首先还是得提取字符串。
+关于响应的格式，
+老哥让我自己去看他写的。
+```
+https://github.com/Yidadaa/UESTC_Helper/blob/master/src/components/course/parser.js#L95
+```
+实在是太秀了。
+
+总的来说，最后决定直接用老哥的代码。
+在服务器搭建node环境，
+然后php调用。
+
+目前要做的就是爬取课程表html数据了。
+URL如下
+```
+http://eams.uestc.edu.cn/eams/courseTableForStd!courseTable.action
+```
+请求方式为POST，参数包括
+- `ignoreHead` = 不知道，默认是1
+- `setting.kind` = 学生课表:std/班级课表:class
+- `startWeek` = 第几周
+- `project.id` = 不知道，默认是1
+- `semester.id` = 学期学年，老眼熟了
+- `ids` = 貌似是学生课表(142846)/班级课表（5522）
+
+
 ## 2018-08-04
 
 前几天有点颓，就没做。

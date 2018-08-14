@@ -13,7 +13,7 @@ if (!require_once 'lib/table2json.php')
     require 'lib/table2json.php';
 if (!require_once 'lib/check_eams.php')
     require 'lib/check_eams.php';
-require 'for_debug/exam-debug.php';//仅用于调试
+//require 'for_debug/exam-debug.php';//仅用于调试
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST')
     exit;

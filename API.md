@@ -11,7 +11,7 @@
 #### 登录 - `login.php` - `POST`  
 
 @request:  
-```js
+```jsonc
 {
   username: String,
   passwd: String,
@@ -20,7 +20,7 @@
 ```
 
 @return:  
-```js
+```jsonc
 {
   success: Boolean,
   error_code: Number, // 在这里列举错误码
@@ -33,7 +33,7 @@
 状态码|含义|备注
 :---:|:---:|:---:
 101|正常登录|/
-102|需要验证码|验证码图片通过bae64转换后放置在content中
+102|需要验证码|验证码图片通过bae64转换后放置在cap_img
 103|学号或密码错误|/
 104|验证码错误|/
 105|后端系统错误|/
@@ -43,7 +43,7 @@
 用于确认token所属的cookie是否有效
 
 @request:
-```js
+```jsonc
 {
   username: String, // 学号
   token: String // 用于校验的token
@@ -51,7 +51,7 @@
 ```
 
 @return:
-```js
+```jsonc
 {
   token_is_availabe: Boolean, // token是否有效
   success: Boolean,
@@ -63,7 +63,7 @@
 读取成绩信息需要提交学号、token和semesterId。
 
 @request:
-```js
+```jsonc
 {
   token: String,
   username: String,
@@ -72,7 +72,7 @@
 ```
 
 @return:
-```js
+```jsonc
 {
   success: Boolean,
   error_code: Number, // 201. token验证失败 202. 未知错误 203. 验证失败
@@ -98,7 +98,7 @@
 获取课程表。
 
 @request:
-```js
+```jsonc
 {
   token: String,
   username: String,
@@ -107,7 +107,7 @@
 ```
 
 @return:
-```js
+```jsonc
 {
   success: Boolean,
   error_code: Number,
@@ -129,7 +129,7 @@
 读取考试信息需要提交学号、token和semesterId。
 
 @request:
-```js
+```jsonc
 {
   token: String,
   username: String,
@@ -138,7 +138,7 @@
 }
 ```
 @return:
-```js
+```jsonc
 {
   success: Boolean,
   error_code: Number,
