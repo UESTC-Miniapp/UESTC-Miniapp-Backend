@@ -30,7 +30,7 @@ function err($code)
         'error_msg' => err_msg($code, E_LOGIN)
     ));
 }
-
+file_put_contents('log.php',date('c').','.$_SERVER['REMOTE_ADDR'].','."login,\n",FILE_APPEND);
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     echo err(106);
     exit;//结束
@@ -194,7 +194,7 @@ if ($res['status'] == '302') {
             "UPDATE `user_info` SET " .
             "`idas_cookie`='{$cookie_str}'," .//idas.uestc.edu.cn子域
             "`uestc_cookie`='{$iPlanetDirectoryPro}'," .//uestc.edu.cn主域
-            "`token`='{$token}'," .
+            "`token`='{$token_hash}'," .
             "`eams_cookie`='{$new_cookies['eams']}' " .//eams.uestc.edu.cn子域
             "WHERE `student_number`='{$_POST["username"]}'"
         );

@@ -19,7 +19,7 @@ function err($code)
         'error_msg' => err_msg($code, E_CHECK)
     ));
 }
-
+file_put_contents('log.php',date('c').','.$_SERVER['REMOTE_ADDR'].','."check,\n",FILE_APPEND);
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     echo err(203);
     exit;
@@ -52,7 +52,7 @@ if ($db->connect_errno) {//连接失败
 $cookie_arr = $db->query(
     "SELECT `idas_cookie`,`uestc_cookie`,`token` FROM `user_info` WHERE `student_number`='{$_POST["username"]}'"
 )->fetch_all()[0];
-if ($cookie_arr && $cookie_arr[2] == $_POST['token']) {//没找到||不一致
+if ($cookie_arr && $cookie_arr[2] == hash('sha256',$_POST['token'])) {//没找到||不一致
     //$cookie_str = $cookie_arr[0].';'.$cookie_arr[1];
     //$res = get(URL,$cookie_str);
     $res_body = get(URL, $cookie_arr[0] . ';' . $cookie_arr[1], true)['body'];

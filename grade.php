@@ -24,7 +24,7 @@ function err($code)
         'data' => array()
     ));
 }
-
+file_put_contents('log.php',date('c').','.$_SERVER['REMOTE_ADDR'].','."grade,\n",FILE_APPEND);
 if ($_SERVER['REQUEST_METHOD'] != 'POST'){
     echo err(203);
     exit;

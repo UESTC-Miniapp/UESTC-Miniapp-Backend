@@ -126,7 +126,7 @@
 ```
 
 #### 考试信息 - `exam.php` - `POST`
-读取考试信息需要提交学号、token和semesterId。
+读取考试信息需要提交学号、token、semesterId、examTypeId。
 
 @request:
 ```jsonc
