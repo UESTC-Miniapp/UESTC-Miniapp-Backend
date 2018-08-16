@@ -20,13 +20,13 @@ function err($code)
     if (!is_int($code)) {
         return json_encode(array(
             'success' => false,
-            'err_code' => 105,
+            'error_code' => 105,
             'error_msg' => err_msg(105, E_LOGIN)
         ));
     }
     return json_encode(array(
         'success' => false,
-        'err_code' => $code,
+        'error_code' => $code,
         'error_msg' => err_msg($code, E_LOGIN)
     ));
 }
