@@ -31,8 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST'){
 }
 
 if (!(array_key_exists('username', $_POST) &&
-    array_key_exists('token', $_POST) &&
-    array_key_exists('semesterId', $_POST))) {
+    array_key_exists('token', $_POST))) {
     echo err(203);
     exit;
 }
@@ -71,7 +70,7 @@ if (!check_eams($cookie_str)) {
     echo err(201);
     exit;
 }
-
+/* //改为获取全部成绩
 if ($_POST['semesterId'] != '') {
     define('GRADE_URL',
         'http://eams.uestc.edu.cn/eams/teach/grade/course/person!search.action?semesterId=' .
@@ -82,6 +81,10 @@ if ($_POST['semesterId'] != '') {
         get('http://eams.uestc.edu.cn/eams/teach/grade/course/person.action', $cookie_str)['cookie']['semester.id']
         . '&projectType=&_=' . (string)time() . '000');
 }
+*/
+define('GRADE_URL',
+    'http://eams.uestc.edu.cn/eams/teach/grade/course/person!historyCourseGrade.action?projectType=MAJOR');
+
 $res = get(GRADE_URL, $cookie_str);
 if ($res['status'] != 200) {
     echo err(202);

@@ -2,6 +2,28 @@
 这并不是readme，而是灌水用的日记。
 请不要指望在此找到任何有价值的内容。
 接口文档去看API.md。
+## 2018-08-17
+修复check_token.php。
+居然会有idas没过期，eams过期这种奇葩的情况。
+check_token.php是之前写的，
+当时还没有处理eams的情况。
+现在把eams的确认也加到check_token里面了。
+---
+学长果然是有做产品经理的潜力。
+成绩信息部分改为获取全部，
+几乎得重写，靠。  
+请求的URL为
+```
+http://eams.uestc.edu.cn/eams/teach/grade/course/person!historyCourseGrade.action?projectType=MAJOR
+```
+请求方式为POST，但是只提交一个  
+`projectType=MAJOR`  
+反正我是看不懂这是什么操作。
+---
+最终还是在后端解析，用了几次正则，
+把原来的那个全部注释了。
+虽然有git，但是恢复起来并不是十分方便，
+而且按PM的尿性，大家懂的。
 ## 2018-08-16
 学校开放了eams，也就是教务处，
 现在理论上是可以登录的，
