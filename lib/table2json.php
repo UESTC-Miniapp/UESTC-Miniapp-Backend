@@ -36,7 +36,7 @@ function t2j($table_str)
 
         preg_match_all('/<td>(.*?)<\/td>/', $value, $single_arr);
         $semester_summary[] = array(
-            'semester_year' => $single_arr[1][1],
+            'semester_year' => $single_arr[1][0],
             'semester_term' => (int)str_replace(' ', '', $single_arr[1][1]),
             'course_count' => (int)str_replace(' ', '', $single_arr[1][2]),
             'sum_point' => (float)str_replace(' ', '', $single_arr[1][3]),
