@@ -8,6 +8,7 @@ require 'lib/url.php';
 require 'lib/dbconf.php';//数据库相关
 require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/err_msg.php';
+require 'lib/check_eams.php';
 //require 'for_debug/check_token-debug.php';
 
 function err($code)
@@ -50,7 +51,7 @@ if ($db->connect_errno) {//连接失败
     exit;
 }
 $cookie_arr = $db->query(
-    "SELECT `idas_cookie`,`uestc_cookie`,`token` FROM `user_info` WHERE `student_number`='{$_POST["username"]}'"
+    "SELECT `idas_cookie`,`uestc_cookie`,`token`,`eams_cookie` FROM `user_info` WHERE `student_number`='{$_POST["username"]}'"
 )->fetch_all()[0];
 if ($cookie_arr && $cookie_arr[2] == hash('sha256',$_POST['token'])) {//没找到||不一致
     //$cookie_str = $cookie_arr[0].';'.$cookie_arr[1];
@@ -69,6 +70,16 @@ if ($cookie_arr && $cookie_arr[2] == hash('sha256',$_POST['token'])) {//没找�
         ));
         exit;
     } else {
+        if(!check_eams($cookie_arr[1].';'.$cookie_arr[3]))
+        {
+            echo json_encode(array(
+                'token_is_available' => false,
+                'success' => true,
+                'error_code' => null,
+                'error_msg' => ''
+            ));
+            exit;
+        }
         echo json_encode(array(
             'token_is_available' => true,
             'success' => true,
