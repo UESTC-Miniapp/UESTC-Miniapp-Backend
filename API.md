@@ -66,8 +66,7 @@
 ```jsonc
 {
   token: String,
-  username: String,
-  semesterId: String // 学年代号，为空时默认返回最近学年成绩信息
+  username: String // 不需要提供semesterId数据，直接返回所有学期的成绩即可
 }
 ```
 
@@ -118,7 +117,8 @@
 ```jsonc
 {
   token: String,
-  username: String // 不需要提供semesterId数据，直接返回所有学期的成绩即可
+  username: String,
+  semesterId: String // 学年代号，为空时默认返回最近学年成绩信息
 }
 ```
 
