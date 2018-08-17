@@ -66,8 +66,7 @@
 ```jsonc
 {
   token: String,
-  username: String,
-  semesterId: String // 学年代号，为空时默认返回最近学年成绩信息
+  username: String // 不需要提供semesterId数据，直接返回所有学期的成绩即可
 }
 ```
 
@@ -77,20 +76,37 @@
   success: Boolean,
   error_code: Number, // 201. token验证失败 202. 未知错误
   error_msg: String,
-  data: [{
-    semester: String, // 学年学期
-    course_code: String, // 课程代码
-    course_id: String, // 课程序号
-    course_name: String, // 课程名称
-    course_type: String, // 课程类别
-    point: Number, // 学分
-    grade: Number, // 总评成绩
-    makeup_grade: Number, // 补考总评
-    final_grade: Number, // 最终成绩
-    gpa: Number // 绩点
-  }, 
-  // ...
-  ]
+  data: {
+    summary: {
+      aver_gpa: Number, // 平均gpa
+      sum_point: Number, // 总学分
+      course_count: Number, // 总课程数
+      time: String // 统计时间
+    },
+    semester_summary:[{
+      semester_year: String, // 如 2016-2017
+      semester_term: Number, // 1或者2，表示上下学期
+      course_count: Number, // 该学期总门数
+      sum_point: Number, // 该学期总学分
+      aver_gpa: Number // 该学期平均绩点
+    },
+    // ...
+    ],
+    detail: [{
+      semester: String, // 学年学期
+      course_code: String, // 课程代码
+      course_id: String, // 课程序号
+      course_name: String, // 课程名称
+      course_type: String, // 课程类别
+      point: Number, // 学分
+      grade: Number, // 总评成绩
+      final_grade: Number, // 最终成绩
+      // makeup_grade: Number, // 补考总评，所有成绩页面没有补考成绩，没有绩点
+      // gpa: Number // 绩点，绩点由前端计算生成
+    }, 
+    // ...
+    ]
+  }
 }
 ```
 
@@ -102,7 +118,7 @@
 {
   token: String,
   username: String,
-  semesterId: String // 学年代号，为空时默认返回最近学年课程表信息
+  semesterId: String // 学年代号，为空时默认返回最近学年成绩信息
 }
 ```
 
