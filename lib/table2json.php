@@ -60,6 +60,17 @@ function t2j($table_str)
     );
     $detail = array();
     preg_match_all('/<tr.*?>(.*?)<\/tr>/', $tbodys[1][1], $course_arr);
+
+    //处理可能有的补考
+    preg_match_all('/<td.*?>(.*?)<\/td>/', $course_arr[1][0], $sbj_arr);
+    if (count($sbj_arr[1]) == 9) {
+        $key_arr = array(
+            'semester', 'course_code',
+            'course_id', 'course_name',
+            'course_type', 'point',
+            'grade', 're_grade', 'final_grade'
+        );
+    }
     foreach ($course_arr[1] as $value) {
         preg_match_all('/<td.*?>(.*?)<\/td>/', $value, $sbj_arr);
         $course = array();
@@ -71,6 +82,10 @@ function t2j($table_str)
                 $course[$key_arr[$key]] = $vvalue;
             } else {
                 $vvalue = str_replace(' ', '', $vvalue);//去除空格
+                if ($vvalue == '') {//处理空值
+                    $course[$key_arr[$key]] = null;
+                    continue;
+                }
                 if (is_numeric($vvalue))//是的话就直接塞
                     $course[$key_arr[$key]] = (float)$vvalue;
                 else//通过上面的转义
