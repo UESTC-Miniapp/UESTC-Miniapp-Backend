@@ -64,9 +64,12 @@ function t2j($table_str)
         preg_match_all('/<td.*?>(.*?)<\/td>/', $value, $sbj_arr);
         $course = array();
         foreach ($sbj_arr[1] as $key => $vvalue) {
-            if ($key < 5)//String直接塞
+            if ($key < 5) {//String直接塞
+                if (strpos($vvalue, '<')) {//去除标签
+                    $vvalue = preg_replace('/<.*?>/', '', $vvalue);
+                }
                 $course[$key_arr[$key]] = $vvalue;
-            else {
+            } else {
                 $vvalue = str_replace(' ', '', $vvalue);//去除空格
                 if (is_numeric($vvalue))//是的话就直接塞
                     $course[$key_arr[$key]] = (float)$vvalue;
