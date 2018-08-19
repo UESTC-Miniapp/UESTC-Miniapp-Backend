@@ -100,6 +100,7 @@
       course_type: String, // 课程类别
       point: Number, // 学分
       grade: Number, // 总评成绩
+      re_grade: Number, //补考成绩，这一项可能没有，没有补考的话值是null
       final_grade: Number, // 最终成绩
       // makeup_grade: Number, // 补考总评，所有成绩页面没有补考成绩，没有绩点
       // gpa: Number // 绩点，绩点由前端计算生成
