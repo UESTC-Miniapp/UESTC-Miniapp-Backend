@@ -6,6 +6,7 @@ define('E_LOGIN', 1);
 define('E_CHECK', 2);
 define('E_GRADE', 3);
 define('E_EXAM',4);
+define('E_TT',5);
 
 function err_msg($code, $type)
 {
@@ -29,6 +30,7 @@ function err_msg($code, $type)
             break;
         case 3:
         case 4:
+        case 5:
             $err_msg = array(
                 201 => 'wrong token',
                 202 => 'unknown error',
