@@ -15,7 +15,7 @@ if (!require_once 'lib/check_eams.php')
     require 'lib/check_eams.php';
 if (!require_once 'lib/err_msg.php')
     require 'lib/err_msg.php';
-require 'for_debug/tt-debug.php';//仅用于调试
+//require 'for_debug/tt-debug.php';//仅用于调试
 function err($code)
 {
     return json_encode(array(
@@ -102,7 +102,7 @@ if ($res['status'] != 200) {
 }
 
 //把html直接灌给zyf写的js
-$res2 = post('http://localhost:30001/', array('content' => $res['body']));
+$res2 = post('http://ch34k.xyz:30001/', array('content' => $res['body']));
 echo json_encode(array(
     'success' => true,
     'error_code' => null,
