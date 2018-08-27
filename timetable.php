@@ -102,7 +102,7 @@ if ($res['status'] != 200) {
 }
 
 //把html直接灌给zyf写的js
-$res2 = post('http://ch34k.xyz:30001/', array('content' => $res['body']));
+$res2 = post('http://localhost:30001/', array('content' => $res['body']));
 echo json_encode(array(
     'success' => true,
     'error_code' => null,

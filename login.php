@@ -10,8 +10,9 @@ require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/dbconf.php';
 require 'lib/checkstr.php';
 require 'lib/err_msg.php';
-//require 'for_debug.php';//方便调试的时候使用
 require 'lib/eams_login.php';
+
+//require 'for_debug.php';//方便调试的时候使用
 
 define('SALT', 'asjhujkdsnlkjsglkjvndlkKHSAHDNkndvdowl.swjNJKFi');//hash盐
 
@@ -171,7 +172,7 @@ if ($res['status'] == '302') {
     //eams登录
     $new_cookies = eams_login($cookie_str, $iPlanetDirectoryPro);
     if ($new_cookies == null) {
-        echo err(105);
+        echo err(108);
         exit;
     }
     if ($new_cookies['idas'] != '') {

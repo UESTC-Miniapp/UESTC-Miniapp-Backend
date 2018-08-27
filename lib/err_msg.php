@@ -18,7 +18,8 @@ function err_msg($code, $type)
                 104 => 'wrong captcha',
                 105 => 'unknown error',
                 106 => 'bad request',
-                107 => 'wrong token'
+                107 => 'wrong token',
+                108 => 'eams falied'
             );
             break;
         case 2:
