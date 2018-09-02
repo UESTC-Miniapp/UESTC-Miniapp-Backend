@@ -75,12 +75,20 @@ if (!check_eams($cookie_str)) {
 
 //请求课程表
 define('TT_URL', 'http://eams.uestc.edu.cn/eams/courseTableForStd!courseTable.action');
+//读取ids
+$res = get('http://eams.uestc.edu.cn/eams/courseTableForStd.action?_=' . (string)time() . '000',
+    $cookie_str);
+preg_match_all('/bg\.form\.addInput\(form\,\"ids\"\,\"(.*?)\"\)\;/', $res['body'], $result_arr);
+if (strlen($result_arr[1][0]) != 6) {//理论上应该是6位的，保守考虑
+    echo err(202);
+    exit;
+}
 $data = array(
     'ignoreHead' => '1',
     'setting.kind' => 'std',
     'startWeek' => '1',
     'project.id' => '1',
-    'ids' => '142846'
+    'ids' => $result_arr[1][0]
 );
 if ($_POST['semesterId'] == '') {//手动获取semesterId
     $res = get(
