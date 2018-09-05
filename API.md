@@ -166,6 +166,7 @@
     course_id: String, // 课程序号
     course_name: String, // 课程名称
     date: String, // 考试日期
+    plan: String, //考试安排
     address: String, // 考试地点
     number: String, // 座位号
     detail: String, // 考试情况

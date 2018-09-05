@@ -4,7 +4,7 @@
  * html table转json
  */
 
-function t2j($table_str)
+function t2j($table_str) //for grade.php
 {
     /*
     $table_str = str_replace("\n", '', $table_str);
@@ -126,7 +126,7 @@ function t2j($table_str)
     */
 }
 
-function t2jE($table_str)
+function t2jE($table_str)//for exam.php
 {
     $nstr = str_replace("\n", '', $table_str);
     $nstr = str_replace("\r", '', $nstr);
@@ -139,7 +139,7 @@ function t2jE($table_str)
 
     $key_arr = array(
         'course_id', 'course_name', 'date',
-        'address', 'number', 'detail'
+        'plan','address', 'number', 'detail'
     );
 
     foreach ($results as $key => $value) {
