@@ -138,8 +138,8 @@ function t2jE($table_str)//for exam.php
     $final_arr = array();
 
     $key_arr = array(
-        'course_id', 'course_name', 'date',
-        'plan','address', 'number', 'detail'
+        'course_id', 'course_name', 'date', 'plan',
+        'address', 'number', 'detail', 'other'
     );
 
     foreach ($results as $key => $value) {
@@ -150,14 +150,16 @@ function t2jE($table_str)//for exam.php
             $final_arr[$key]['status'] = false;//标记为未发布
             preg_match('/<td colspan\=\"(\d)\">(.*?)<\/td>/', $value, $numbers);
             //numbers[1]为空的数量
+            $i = 0;
             foreach ($td_arr[1] as $kkey => $vvalue) {
                 if (strpos($vvalue, '[考试情况尚未发布]')) {
-                    for ($i = 0; $i < $numbers[1]; $i += 1) {//补全
+                    for (; $i < $numbers[1]; $i += 1) {//补全
                         $final_arr[$key][$key_arr[$kkey + $i]] = '';
                     }
+                    $i -= 1;
                     continue;
                 }
-                $final_arr[$key][$key_arr[$kkey]] = $vvalue;
+                $final_arr[$key][$key_arr[$kkey + $i]] = $vvalue;
             }
         } else {
             $final_arr[$key]['status'] = true;//标记为正常

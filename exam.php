@@ -15,7 +15,7 @@ if (!require_once 'lib/check_eams.php')
     require 'lib/check_eams.php';
 if (!require_once 'lib/err_msg.php')
     require 'lib/err_msg.php';
-//require 'for_debug/exam-debug.php';//仅用于调试
+require 'for_debug/exam-debug.php';//仅用于调试
 
 function err($code)
 {
