@@ -176,3 +176,32 @@
   ]
 }
 ```
+#### 个人信息 - `person.php` - `POST`
+读取个人信息需要提交学号和token。
+
+@request:
+```jsonc
+{
+  token: String,
+  username: String
+}
+```
+@return:
+```jsonc
+{
+  success: Boolean,
+  error_code: Number,
+  error_msg: String,
+  data: [{
+    name: String, //姓名
+    ename: String, //姓名（英文）
+    major: String, //专业
+    college: String, //学院
+    status: String, //学籍
+    type: String, //类型
+    campus: String //校区
+  }, 
+  // ...
+  ]
+}
+```
