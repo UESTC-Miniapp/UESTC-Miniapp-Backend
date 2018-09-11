@@ -170,3 +170,42 @@ function t2jE($table_str)//for exam.php
     }
     return $final_arr;
 }
+
+function t2jP($table_str)
+{
+    preg_match(
+        '/<table.*?studentInfoTb.*?>([\s\S]*?)<\/table>/',
+        $table_str,
+        $table_arr);
+    preg_match('/姓名：<\/td>[\s\S]*?<td>(.*?)<\/td>/',
+        $table_arr[1],
+        $name_arr);
+    //$name = $name_arr[1];
+    preg_match('/英文名：<\/td>[\s\S]*?<td>(.*?)<\/td>/',
+        $table_arr[1],
+        $ename_arr);
+    preg_match('/专业：<\/td>[\s\S]*?<td>(.*?)<\/td>/',
+        $table_arr[1],
+        $major_arr);
+    preg_match('/院系：<\/td>[\s\S]*?<td>(.*?)<\/td>/',
+        $table_arr[1],
+        $college_arr);
+    preg_match('/学籍状态：<\/td>[\s\S]*?<td>(.*?)<\/td>/',
+        $table_arr[1],
+        $status_arr);
+    preg_match('/学生类别：<\/td>[\s\S]*?<td>(.*?)<\/td>/',
+        $table_arr[1],
+        $type_arr);
+    preg_match('/所属校区：<\/td>[\s\S]*?<td>(.*?)<\/td>/',
+        $table_arr[1],
+        $campus_arr);
+    return array(
+        'name' => $name_arr[1],
+        'ename' => $ename_arr[1],
+        'major' => $major_arr[1],
+        'college' => $college_arr[1],
+        'status' => $status_arr[1],
+        'type' => $type_arr[1],
+        'campus' => $campus_arr[1]
+    );
+}

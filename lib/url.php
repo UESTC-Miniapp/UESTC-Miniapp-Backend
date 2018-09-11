@@ -105,28 +105,28 @@ function get($url, $cookie_str = '', $auto_follow = false)
     if (curl_getinfo($ch, CURLINFO_HTTP_CODE) != '404') {
         $header_str = substr($output, 0, curl_getinfo($ch, CURLINFO_HEADER_SIZE));
         $header_str = preg_replace("/HTTP\/1\.\d\s[1-5]\d\d\s\w{1,6}\r\n/", '', $header_str);
-/*
-        $header_arr1 = explode("\r\n\r\n", $header_str);
-        //$header_str = substr($header_str, strpos($header_str, "\r\n"));
-        $header_arr = array();
-        foreach ($header_arr1 as $key => $value) {
-            if ($value == '')
-                unset($header_arr1[$key]);
-            else
-                $header_arr[] = explode("\r\n", $value);
-            //$header_arr[]='';
-        }
-        $headers = array();
-        foreach ($header_arr as $keys => $values) {
-            $headers[] = array();
-            foreach ($values as $key => $value) {
-                //unset($headers[$keys][$key]);
-                $kname = substr($value, 0, strpos($value, ':'));
-                $vname = substr($value, strpos($value, ':') + 1);
-                $headers[$keys][$kname] = $vname;
-            }
-        }
-*/
+        /*
+                $header_arr1 = explode("\r\n\r\n", $header_str);
+                //$header_str = substr($header_str, strpos($header_str, "\r\n"));
+                $header_arr = array();
+                foreach ($header_arr1 as $key => $value) {
+                    if ($value == '')
+                        unset($header_arr1[$key]);
+                    else
+                        $header_arr[] = explode("\r\n", $value);
+                    //$header_arr[]='';
+                }
+                $headers = array();
+                foreach ($header_arr as $keys => $values) {
+                    $headers[] = array();
+                    foreach ($values as $key => $value) {
+                        //unset($headers[$keys][$key]);
+                        $kname = substr($value, 0, strpos($value, ':'));
+                        $vname = substr($value, strpos($value, ':') + 1);
+                        $headers[$keys][$kname] = $vname;
+                    }
+                }
+        */
 
         $header = array();//header中的key-value读取到array
         $cookie_array = array();
