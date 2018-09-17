@@ -223,9 +223,109 @@
   error_msg: String,
   data:{
     number: String, //卡号
-    balence: Number, //余额
-    status: String //状态，一般为正常
+    balance: Number, //余额
+    status: String, //状态，一般为正常
+    date: String, //卡片有效期
+    uncashed_balance: Number //待领取余额
   }
 }
 ```
-#### 
+#### 消费趋势 - `ecard/stat.php` - `POST`
+需要提供学号和token。
+
+@request:
+```jsonc
+{
+  token: String,
+  username: String
+}
+```
+@return:
+```jsonc
+{
+  success: Boolean,
+  error_code: Number,
+  error_msg: String,
+  data:[
+    ["20180831",11061225,1.1],
+    ["20180901",11061225,28.5],
+    ...
+  ]
+}
+```
+#### 消费地点 - `ecard/place.php` - `POST`
+需要提供学号和token。
+
+@request:
+```jsonc
+{
+  token: String,
+  username: String
+}
+```
+@return:
+```jsonc
+{
+  success: Boolean,
+  error_code: Number,
+  error_msg: String,
+  data:[
+    [4,"二食堂紫荆餐厅",18.9],
+    [10,"二食堂清真餐厅",36.5],
+    ...
+  ]
+}
+```
+#### 充值趋势 - `ecard/charge.php` - `POST`
+需要提供学号和token。
+
+@request:
+```jsonc
+{
+  token: String,
+  username: String
+}
+```
+@return:
+```jsonc
+{
+  success: Boolean,
+  error_code: Number,
+  error_msg: String,
+  data:[
+    [3232,"一食堂1F多媒体",100.0],
+    [3229,"一食堂1F多媒体（黄色）",200.0],
+    ...
+  ]
+}
+```
+#### 交易流水 - `ecard/history.php` - `POST`
+需要提供学号、token、页数。  
+默认爬取180天的。
+
+@request:
+```jsonc
+{
+  token: String,
+  username: String,
+  page: Number //页数
+}
+```
+@return:
+```jsonc
+{
+  success: Boolean,
+  error_code: Number,
+  error_msg: String,
+  data:[
+    {
+      date: Number, //交易日期
+      time: Number, //交易时间（hms，不是unix时间戳）
+      device: String, //交易设备
+      price: Number, //交易金额
+      balance: Number, //卡内余额
+    },
+    ...
+  ]
+}
+```
