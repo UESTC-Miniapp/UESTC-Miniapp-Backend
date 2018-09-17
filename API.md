@@ -205,3 +205,26 @@
   ]
 }
 ```
+#### 一卡通信息 - `ecard/info.php` - `POST`
+需要提供学号和token。
+
+@request:
+```jsonc
+{
+  token: String,
+  username: String
+}
+```
+@return:
+```jsonc
+{
+  success: Boolean,
+  error_code: Number,
+  error_msg: String,
+  data:{
+    number: String, //卡号
+    balence: Number, //余额
+    status: String //状态，一般为正常
+  }
+}
+```

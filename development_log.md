@@ -2,6 +2,56 @@
 这并不是readme，而是灌水用的日记。
 请不要指望在此找到任何有价值的内容。
 接口文档去看API.md。
+## 2018-09-16
+正式开始写一卡通部分，
+这一块内容有点多，
+可能要放缓了。
+前端部分估计工作量也比较大，
+今年内应该没法上线。
+---
+写一下内容吧，
+以下几点（突然学起领导的口气了呢）
+- 一卡通信息，包括卡号，余额，状态等
+- 交易流水，明细
+- 消费趋势
+- 消费低点
+- 充值趋势
+
+最后三点就是“我的活动”里面的那三个图，
+分别对应三个POST，
+响应都是json，
+基本上直接发回去就行，
+URL都是
+```
+http://ecard.uestc.edu.cn/web/guest/myactive
+```
+包含8个链接参数
+- `p_p_id=myActive_WAR_ecardportlet`
+- `p_p_lifecycle=2`
+- `p_p_state=normal`
+- `p_p_mode=view`
+- `p_p_resource_id`有三个值，
+`consumeStat`,`consumeComp`,`dpsStat`，
+分别对应三张表的数据。
+- `p_p_cacheability=cacheLevelPage`
+- `p_p_col_id=column-1`
+- `p_p_col_count=1`
+
+以及一个Form-Data
+- `_myActive_WAR_ecardportlet_days=30`
+
+前面两个就从页面获取，
+信息没什么说的，
+老样子。  
+交易明细是一个HTML table，
+在后端做解析到json再发回。  
+因为学长的需求，
+就把一卡通部分的接口都放到一个目录下。  
+
+是时候重构一波了，复用验证请求和token部分的代码。  
+
+一卡通信息比较好做，
+就先做这个。
 ## 2018-09-11
 个人信息部分写完了，
 简单测试了一下，貌似没有问题。  
