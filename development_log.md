@@ -2,6 +2,74 @@
 这并不是readme，而是灌水用的日记。
 请不要指望在此找到任何有价值的内容。
 接口文档去看API.md。
+## 2018-09-18
+一卡通的登录会经过一个跳转到idas，
+然后再跳转回来，
+这一过程中会进行Set-Cookie。  
+关键是跳转特别快，这就有点坑了。
+
+用postman直接请求会读取到一卡通登录页面，
+postman有重定向自动跟随，
+但是浏览器打开则会跳转到统一认证，
+也就是说这里的跳转是通过js实现的，
+把浏览器的js关掉后没有发生跳转也说明了这点。
+
+另外可以确定的一点是，
+登录idas之后会发生302跳转到ecard，
+链接中有个参数为ticket，
+似乎就是用这个参数来实现跨站验证的。  
+而且跳转过去的时候一定要快，
+否则报500错误。  
+但是从请求的结果来看，
+十分奇怪。
+带ticket的URL请求，
+没有任何Set-Cookie，
+而浏览器会携带几个cookie。  
+我的理解是，
+第一次请求的时候设置了cookie，
+然后ticket作为一个激活码，
+学校后端接到这个激活码后将原来的cookie生效。
+
+不过我又试了下关闭js的时候，
+一卡通页面依然可以通过表单的POST请求来登录。
+如果这样登录不影响其他cookie，
+那么就决定使用这个方式来登录一卡通。
+一卡通有三个cookie
+- `COOKIE_SUPPORT=true`
+- `GUEST_LANGUAGE_ID=zh_CN`
+- `JSESSIONID=...`这个应该就是用于验证的了
+
+其中`JSESSIONID`会在请求`http://ecard.uestc.edu.cn/`的时候设置。  
+登录时候POST的URL是
+```URL
+http://ecard.uestc.edu.cn/c/portal/login
+```
+登录时候提交的表单有三个数据
+- `_58_login_type=_58_login_type`
+- `_58_login`学号
+- `_58_password`密码
+
+如果登录成功的话会302跳转到
+```URL
+http://ecard.uestc.edu.cn/web/guest/personal
+```
+并且会设置新的`JSESSIONID`并加上一个`GUEST_LANGUAGE_ID=zh_CN`  
+
+如果登录失败则一般会跳转到
+```URL
+http://192.168.254.154/web/guest/index?_yktlogin_WAR_ecardportlet_err=1
+```
+这里做个判断就可以。
+
+再次感觉到重构的必要了，
+有必要用上异常处理，
+免得返回的内容不准确，
+写得像坨shit。
+
+忘了说了，读取一卡通信息的URL是
+```URL
+http://ecard.uestc.edu.cn/web/guest/personal
+```
 ## 2018-09-17
 突然发现似乎要登录一卡通了，
 也就是`ecard.uestc.edu.cn`这个域名。  

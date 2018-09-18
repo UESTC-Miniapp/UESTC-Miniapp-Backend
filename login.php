@@ -11,6 +11,7 @@ require 'lib/dbconf.php';
 require 'lib/checkstr.php';
 require 'lib/err_msg.php';
 require 'lib/eams_login.php';
+require 'lib/ecard_login.php';
 
 //require 'for_debug.php';//方便调试的时候使用
 
@@ -31,7 +32,8 @@ function err($code)
         'error_msg' => err_msg($code, E_LOGIN)
     ));
 }
-file_put_contents('log.php',date('c').','.$_SERVER['REMOTE_ADDR'].','."login,\n",FILE_APPEND);
+
+file_put_contents('log.php', date('c') . ',' . $_SERVER['REMOTE_ADDR'] . ',' . "login,\n", FILE_APPEND);
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     echo err(106);
     exit;//结束
@@ -182,6 +184,14 @@ if ($res['status'] == '302') {
         $iPlanetDirectoryPro = $new_cookies['iplan'];
     }
 
+    //ecard登录
+    try {
+        $ecard_cookie = ecard_login($_POST['username'], $_POST['passwd']);
+    } catch (Exception $e) {
+        echo err($e->getMessage());
+        exit;
+    }
+
     $token = hash('sha256',
         $cookie_str . (string)time() . $_POST['username'] . SALT);//生成token
     $token_hash = hash('sha256', $token);
@@ -196,12 +206,13 @@ if ($res['status'] == '302') {
             "`idas_cookie`='{$cookie_str}'," .//idas.uestc.edu.cn子域
             "`uestc_cookie`='{$iPlanetDirectoryPro}'," .//uestc.edu.cn主域
             "`token`='{$token_hash}'," .
+            "`ecard_cookie` = '{$ecard_cookie}'," .
             "`eams_cookie`='{$new_cookies['eams']}' " .//eams.uestc.edu.cn子域
             "WHERE `student_number`='{$_POST["username"]}'"
         );
     else
         $db->query(
-            "INSERT INTO `user_info` (`student_number`,`token`,`idas_cookie`,`uestc_cookie`,`eams_cookie`) VALUES ('{$_POST["username"]}','{$token_hash}','{$cookie_str}','{$iPlanetDirectoryPro}','{$new_cookies['eams']}')"
+            "INSERT INTO `user_info` (`student_number`,`token`,`idas_cookie`,`uestc_cookie`,`eams_cookie`,`ecard_cookie`) VALUES ('{$_POST["username"]}','{$token_hash}','{$cookie_str}','{$iPlanetDirectoryPro}','{$new_cookies['eams']}','{$ecard_cookie}')"
         );
 
     //echo $token;
