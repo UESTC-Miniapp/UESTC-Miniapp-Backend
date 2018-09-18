@@ -9,7 +9,7 @@ require '../lib/err_msg.php';
 require '../lib/check_ecard.php';
 require '../lib/table2json.php';
 
-require '../for_debug.php';//仅用于调试
+//require '../for_debug.php';//仅用于调试
 
 function err($code)
 {
