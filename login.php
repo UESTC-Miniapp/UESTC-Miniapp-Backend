@@ -13,7 +13,7 @@ require 'lib/err_msg.php';
 require 'lib/eams_login.php';
 require 'lib/ecard_login.php';
 
-//require 'for_debug.php';//方便调试的时候使用
+require 'for_debug.php';//方便调试的时候使用
 
 define('SALT', 'asjhujkdsnlkjsglkjvndlkKHSAHDNkndvdowl.swjNJKFi');//hash盐
 
