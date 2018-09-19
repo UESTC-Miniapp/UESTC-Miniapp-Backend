@@ -2,13 +2,13 @@
 /**
  * 一卡通信息
  */
+
 require '../lib/url.php';
 require '../lib/checkstr.php';
 require '../lib/dbconf.php';
 require '../lib/err_msg.php';
 require '../lib/check_ecard.php';
 require '../lib/table2json.php';
-
 //require '../for_debug.php';//仅用于调试
 
 function err($code)
@@ -21,7 +21,7 @@ function err($code)
     ));
 }
 
-file_put_contents('../log.php', date('c') . ',' . $_SERVER['REMOTE_ADDR'] . ',' . "grade,\n", FILE_APPEND);
+file_put_contents('../log.php', date('c') . ',' . $_SERVER['REMOTE_ADDR'] . ',' . "ecard_info,\n", FILE_APPEND);
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     echo err(203);
     exit;
@@ -69,7 +69,7 @@ if (!check_ecard($cookie_str)) {
 //以上基本是抄的
 
 //开始请求数据
-$res = get('http://ecard.uestc.edu.cn/web/guest/personal',$cookie_str);
+$res = get('http://ecard.uestc.edu.cn/web/guest/personal', $cookie_str);
 preg_match('/卡号：(\d{2,8})/', $res['body'], $num_arr);
 preg_match('/卡余额：.*?>(.*?)<\/span>元/', $res['body'], $balance_arr);
 preg_match('/卡状态：(.*?)<\/td>/', $res['body'], $status_arr);
