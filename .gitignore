@@ -1,6 +1,4 @@
 lib/3rd_lib/tt-parser/node_modules/**
-lib/3rd_lib/tt-parser/node_modules/accepts
-lib/3rd_lib/simple_html_dom.php
 **/node_modules
 for_debug.php
 *.txt

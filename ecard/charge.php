@@ -77,4 +77,9 @@ if($res['status']!=200){
     echo err(203);
     exit;
 }
-echo $res['body'];
+echo json_encode(array(
+    'success' => true,
+    'error_code' => null,
+    'error_msg' => '',
+    'data' => json_decode($res['body'])
+));
