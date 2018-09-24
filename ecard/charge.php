@@ -32,7 +32,7 @@ if (!(array_key_exists('username', $_POST) &&
     exit;
 }
 if (!check_username($_POST['username'])) {
-    err(201);
+    echo err(201);
     exit;
 }
 

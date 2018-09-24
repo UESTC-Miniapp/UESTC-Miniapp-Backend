@@ -2,6 +2,34 @@
 这并不是readme，而是灌水用的日记。
 请不要指望在此找到任何有价值的内容。
 接口文档去看API.md。
+## 2018-09-24
+今天大概可以把交易流水搞定吧。
+顺便修改下接口文档。  
+请求URL为
+```URL
+http://ecard.uestc.edu.cn/web/guest/personal?
+```
+方式是POST，带一堆参数：
+- `p_p_id=transDtl_WAR_ecardportlet`
+- `p_p_lifecycle=0`
+- `p_p_state=exclusive`
+- `p_p_mode=view`
+- `p_p_col_id=column-4`
+- `p_p_col_count=1`
+- `_transDtl_WAR_ecardportlet_action=dtlmoreview`
+
+都是固定的。  
+还带一个表单，完整版如下：
+- `_transDtl_WAR_ecardportlet_cur`=页数
+- `_transDtl_WAR_ecardportlet_delta`=总页数
+- `_transDtl_WAR_ecardportlet_qdate`=查询时间（7|30|60|180）
+- `_transDtl_WAR_ecardportlet_qtype`=交易类型（1=充值|2=消费|3=易支付电控）
+
+差不多就这样，另外查第一页不用前面两个。
+
+写完了。  
+教务处网站又双叒叕挂了，
+现在不好测试，先放着不推了。
 ## 2018-09-19
 更新了.gitignore，
 以后有空还是做一下git推送自动部署，
@@ -19,7 +47,8 @@
 靠，出问题了，
 不能直接返回过去，
 得放到json中的data部分，
-靠。
+靠。  
+已解决。
 ## 2018-09-18
 一卡通的登录会经过一个跳转到idas，
 然后再跳转回来，

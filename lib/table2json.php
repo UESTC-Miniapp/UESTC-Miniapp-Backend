@@ -209,3 +209,49 @@ function t2jP($table_str)
         'campus' => $campus_arr[1]
     );
 }
+
+function t2jH($table_str)
+{
+    preg_match_all("/<tr>([\s\S]*?)<\/tr>/", $table_str, $table_arr);
+    //第一行数据为标题，需要略去
+    unset($table_arr[1][0]);
+    $ret = array(
+        'json' => array(),
+        'payment' => null,
+        'charge' => null
+    );
+    $key_name = array(
+        'date',
+        'time',
+        'device',
+        'price',
+        'balance'
+    );
+    foreach ($table_arr[1] as $key => $value) {
+        //处理内部值
+        //$ret['json'][] = array();
+        preg_match_all("/<td.*?>(.*?)<\/td>/", $value, $th_arr);
+        foreach ($th_arr[1] as $kkey => $vvalue) {
+            if (strpos($vvalue, 'span')) {//去除span标签
+                $vvalue = preg_replace("/<span .*?>/", '', $vvalue);
+                $vvalue = str_replace('</span>', '', $vvalue);
+            }
+            if ($kkey < 2)
+                $ret['json'][$key][$key_name[$kkey]] = (int)$vvalue;
+            else if ($kkey > 2)
+                $ret['json'][$key][$key_name[$kkey]] = (float)$vvalue;
+            else
+                $ret['json'][$key][$key_name[$kkey]] = $vvalue;
+        }
+    }
+    if (strpos($table_str, '共计')) {
+        preg_match("/消费.*?>(.*?)<\/span>/", $table_str, $payment_arr);
+        $ret['payment'] = (float)$payment_arr[1];
+        preg_match("/充值.*?>(.*?)<\/span>/", $table_str, $charge_arr);
+        $ret['charge'] = (float)$charge_arr[1];
+    } else {
+        $ret['payment'] = null;
+        $ret['charge'] = null;
+    }
+    return $ret;
+}

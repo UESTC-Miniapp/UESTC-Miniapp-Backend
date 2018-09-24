@@ -317,7 +317,9 @@
 {
   token: String,
   username: String,
-  page: Number //页数
+  page: Number, //页数
+  date_range: Number, //查询时间,7|30|60|180
+  type: Number //交易类型,2=消费|1=充值|3=易支付电控
 }
 ```
 @return:
@@ -326,15 +328,21 @@
   success: Boolean,
   error_code: Number,
   error_msg: String,
-  data:[
+  data:{
+    pages: Number, //总页数
+    date_range: Number, //查询时间
+    payment: Number, //总消费
+    charge: Number, //总充值
+    detail: [
     {
-      date: Number, //交易日期
+      date: Number, //交易日期（ymd，不是unix时间戳）
       time: Number, //交易时间（hms，不是unix时间戳）
       device: String, //交易设备
       price: Number, //交易金额
       balance: Number, //卡内余额
     },
     ...
-  ]
+    ]
+  }
 }
 ```
