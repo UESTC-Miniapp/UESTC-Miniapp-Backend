@@ -231,6 +231,7 @@
   error_code: Number,
   error_msg: String,
   data:{
+    nickname: String, //姓名
     number: String, //卡号
     balance: Number, //余额
     status: String, //状态，一般为正常

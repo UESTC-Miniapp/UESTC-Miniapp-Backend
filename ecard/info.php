@@ -70,6 +70,7 @@ if (!check_ecard($cookie_str)) {
 
 //开始请求数据
 $res = get('http://ecard.uestc.edu.cn/web/guest/personal', $cookie_str);
+preg_match('/你好，(.*?)，欢迎回来！/',$res['body'],$nickname_arr);
 preg_match('/卡号：(\d{2,8})/', $res['body'], $num_arr);
 preg_match('/卡余额：.*?>(.*?)<\/span>元/', $res['body'], $balance_arr);
 preg_match('/卡状态：(.*?)<\/td>/', $res['body'], $status_arr);
@@ -80,6 +81,7 @@ echo json_encode(array(
     'error_code' => null,
     'error_msg' => '',
     'data' => array(
+        'nickname'=>$nickname_arr[1],
         'number' => $num_arr[1],
         'balance' => $balance_arr[1],
         'status' => $status_arr[1],
