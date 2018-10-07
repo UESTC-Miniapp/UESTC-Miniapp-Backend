@@ -21,7 +21,7 @@ function err($code)
     ));
 }
 
-file_put_contents('../log.php', date('c') . ',' . $_SERVER['REMOTE_ADDR'] . ',' . "ecard_stat,\n", FILE_APPEND);
+file_put_contents('../log.php', date('c') . ',' . $_SERVER['REMOTE_ADDR'] . ',' . "ecard_charge,\n", FILE_APPEND);
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     echo err(203);
     exit;
