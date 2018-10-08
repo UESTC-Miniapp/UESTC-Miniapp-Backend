@@ -237,11 +237,11 @@ function t2jH($table_str)
                 $vvalue = str_replace('</span>', '', $vvalue);
             }
             if ($kkey < 2)
-                $ret['json'][$key][$key_name[$kkey]] = (int)$vvalue;
+                $ret['json'][][$key_name[$kkey]] = (int)$vvalue;
             else if ($kkey > 2)
-                $ret['json'][$key][$key_name[$kkey]] = (float)$vvalue;
+                $ret['json'][][$key_name[$kkey]] = (float)$vvalue;
             else
-                $ret['json'][$key][$key_name[$kkey]] = $vvalue;
+                $ret['json'][][$key_name[$kkey]] = $vvalue;
         }
     }
     if (strpos($table_str, '共计')) {

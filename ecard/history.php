@@ -10,7 +10,7 @@ require '../lib/err_msg.php';
 require '../lib/check_ecard.php';
 require '../lib/table2json.php';
 
-//require '../for_debug.php';//仅用于调试
+require '../for_debug.php';//仅用于调试
 
 function err($code)
 {
@@ -118,8 +118,8 @@ $jsons=t2jH($res['body']);
 
 echo json_encode(array(
     'success' => true,
-    'err_code' => null,
-    'err_msg' => '',
+    'error_code' => null,
+    'error_msg' => '',
     'data' => array(
         'pages' => (int)$count_arr[1],
         'date_range' => $_POST['date_range'],
