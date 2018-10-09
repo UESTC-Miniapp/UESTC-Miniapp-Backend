@@ -214,6 +214,30 @@
   ]
 }
 ```
+#### 注册信息 - `person/enroll.php` - `POST`
+@request:
+```jsonc
+{
+  token: String,
+  username: String
+}
+```
+@return:
+```jsonc
+{
+  success: Boolean,
+  error_code: Number,
+  error_msg: String,
+  data: [{
+    semester: String,
+    application_date: String,
+    status: String, // 已注册/未注册
+    verifier: String,
+    verify_date: String // 审核时间
+  }]
+}
+```
+
 #### 一卡通信息 - `ecard/info.php` - `POST`
 需要提供学号和token。
 
