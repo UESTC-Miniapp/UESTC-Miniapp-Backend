@@ -227,6 +227,13 @@ function t2jH($table_str)
         'price',
         'balance'
     );
+    $tmp_arr = array(
+        'date' => '',
+        'time' => '',
+        'device' => '',
+        'price' => '',
+        'balance' => ''
+    );
     foreach ($table_arr[1] as $key => $value) {
         //处理内部值
         //$ret['json'][] = array();
@@ -237,12 +244,13 @@ function t2jH($table_str)
                 $vvalue = str_replace('</span>', '', $vvalue);
             }
             if ($kkey < 2)
-                $ret['json'][][$key_name[$kkey]] = (int)$vvalue;
+                $tmp_arr[$key_name[$kkey]] = (int)$vvalue;
             else if ($kkey > 2)
-                $ret['json'][][$key_name[$kkey]] = (float)$vvalue;
+                $tmp_arr[$key_name[$kkey]] = (float)$vvalue;
             else
-                $ret['json'][][$key_name[$kkey]] = $vvalue;
+                $tmp_arr[$key_name[$kkey]] = $vvalue;
         }
+        $ret['json'][] = $tmp_arr;
     }
     if (strpos($table_str, '共计')) {
         preg_match("/消费.*?>(.*?)<\/span>/", $table_str, $payment_arr);
