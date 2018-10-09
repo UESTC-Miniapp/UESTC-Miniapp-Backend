@@ -263,3 +263,25 @@ function t2jH($table_str)
     }
     return $ret;
 }
+
+function t2jER($table_str)
+{
+    preg_match('/<tbody\s.*?>([\s\S]*?)<\/tbody>/', $table_str, $tbody_arr);
+    preg_match_all('/<tr>([\s\S]*?)<\/tr>/', $tbody_arr[1], $tr_arr);
+    $key_name = array(
+        'semester',
+        'application_date',
+        'status',
+        'verifier',
+        'verify_date'
+    );
+    $ret = array();
+    foreach ($tr_arr[1] as $key => $value) {
+        $ret[] = array();
+        preg_match_all('/<td>(.*?)<\/td>/', $value, $td_arr);
+        foreach ($td_arr[1] as $kkey => $vvalue) {
+            $ret[$key][$key_name[$kkey]] = $vvalue;
+        }
+    }
+    return $ret;
+}

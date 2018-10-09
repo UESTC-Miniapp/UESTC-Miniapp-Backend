@@ -5,7 +5,24 @@
 ## 2018-10-09
 再次修复history.php中json字符串错乱。
 对php的数组了解不够透彻，
-还需要深入学习。
+还需要深入学习。  
+API更新了注册信息模块，
+这里爬取方式。
+
+请求方式为GET，URL是
+```URL
+http://eams.uestc.edu.cn/eams/registerApply!search.action
+```
+带一个参数`_`，
+参数值为unix时间戳（毫秒）。  
+请求得到的字符串为HTML代码，
+表格的内容就在第三个`tbody`标签里面，
+直接上正则就行。
+
+注册信息开发完成，
+貌似这玩意只是当个装饰？
+服了老哥了。
+
 ## 2018-10-08
 修复了history响应中array变object的问题。
 
