@@ -37,6 +37,10 @@
   error_msg: String, // 用于返回错误详情
   cap_img: String, // 可选，base64编码后的验证码图片，如果直接登录成功，该字段为空
   token: String // 如果登录成功，则返回token，如果需要验证码，该字段为空
+  status:{ //网站状态
+    eams: Boolean, //教务处
+    ecard: Boolean //一卡通
+  }
 }
 ```
 
