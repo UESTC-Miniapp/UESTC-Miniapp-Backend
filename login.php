@@ -17,18 +17,19 @@ require 'lib/ecard_login.php';
 
 define('SALT', 'asjhujkdsnlkjsglkjvndlkKHSAHDNkndvdowl.swjNJKFi');//hash盐
 
-function err($code, $s)
+function err($code, $s, $t)
 {
     if (!is_int($code)) {
         return json_encode(array(
             'success' => false,
             'error_code' => 105,
             'error_msg' => err_msg(105, E_LOGIN),
+            'token' => $t,
             'status' => $s
         ));
     }
     return json_encode(array(
-        'success' => false,
+        'success' => ($code == 108 || $code == 109) ? true : false,
         'error_code' => $code,
         'error_msg' => err_msg($code, E_LOGIN),
         'status' => $s
@@ -40,19 +41,20 @@ $status = array(
     'eams' => false,
     'ecard' => false
 );
+$ret_token = '';
 
 file_put_contents('log.php', date('c') . ',' . $_SERVER['REMOTE_ADDR'] . ',' . "login,\n", FILE_APPEND);
 try {
     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-        throw new Exception('106');
+        throw new Exception(err_msg(106, E_LOGIN), 106);
     }
     if (!(array_key_exists('username', $_POST) &&
         array_key_exists('passwd', $_POST))) {
-        throw new Exception('106');
+        throw new Exception(err_msg(106, E_LOGIN), 106);
     }
     if (array_key_exists('cap', $_POST)) {
         if (!array_key_exists('token', $_POST)) {
-            throw new Exception('106');
+            throw new Exception(err_msg(106, E_LOGIN), 106);
         }
     }
 
@@ -66,12 +68,12 @@ try {
         DB_PORT);
     if ($db->connect_errno) {
         //echo '数据库连接失败:' . (string)$db->connect_errno;
-        throw new Exception('105');
+        throw new Exception(err_msg(105, E_LOGIN), 105);
     }
 
 //检测用户输入
     if (!check_username($_POST['username'])) {
-        throw new Exception('103');
+        throw new Exception(err_msg(103, E_LOGIN), 103);
     }
 
 //URL
@@ -81,7 +83,7 @@ try {
 
     $response = get(URL);
     if ($response == null) {
-        throw new Exception('110');
+        throw new Exception(err_msg(110, E_LOGIN), 110);
     }
 
     $cookie_str = '';//提取cookie字符串
@@ -94,10 +96,10 @@ try {
             if (hash('sha256', $_POST['token']) == $query_res[0][0])
                 $cookie_str = $query_res[0][1];
             else {
-                throw new Exception('107');
+                throw new Exception(err_msg(107, E_LOGIN), 107);
             }
         } else {
-            throw new Exception('106');
+            throw new Exception(err_msg(106, E_LOGIN), 106);
         }
     } else {//读取新的cookie
         foreach ($response['header']['Set-Cookie'] as $value) {
@@ -132,7 +134,7 @@ try {
                 'success' => false,
                 'error_code' => 102,
                 'error_msg' => 'require captcha',
-                'content' => base64_encode(get(CapIMGURL, $cookie_str)['body']),
+                'cap_img' => base64_encode(get(CapIMGURL, $cookie_str)['body']),
                 'token' => $token,
                 'status' => $status
             ));
@@ -175,26 +177,10 @@ try {
         }
         //$new_loc = $res['head']['Location'];//暂时不需要处理302跳转
         if (!$iPlanetDirectoryPro) {//如果没有这个cookie，估计是有问题的，为了稳定性
-            throw new Exception('105');
+            throw new Exception(err_msg(105, E_LOGIN), 105);
         }
 
-        //eams登录
-        $new_cookies = eams_login($cookie_str, $iPlanetDirectoryPro);
-        if ($new_cookies == null) {
-            throw new Exception('108');
-        }
-        $status['eams'] = true;
-        if ($new_cookies['idas'] != '') {
-            preg_replace('/JSESSIONID\_ids\d\=.*;/', $new_cookies['idas'] . ';', $cookie_str);//idas改变
-        }
-        if ($new_cookies['iplan'] != '') {
-            $iPlanetDirectoryPro = $new_cookies['iplan'];
-        }
-
-        //ecard登录
-        $ecard_cookie = ecard_login($_POST['username'], $_POST['passwd']);
-        $status['ecard'] = true;
-
+        //生成token
         $token = hash('sha256',
             $cookie_str . (string)time() . $_POST['username'] . SALT);//生成token
         $token_hash = hash('sha256', $token);
@@ -208,15 +194,79 @@ try {
                 "UPDATE `user_info` SET " .
                 "`idas_cookie`='{$cookie_str}'," .//idas.uestc.edu.cn子域
                 "`uestc_cookie`='{$iPlanetDirectoryPro}'," .//uestc.edu.cn主域
-                "`token`='{$token_hash}'," .
-                "`ecard_cookie` = '{$ecard_cookie}'," .
+                "`token`='{$token_hash}'" .
+                //"`ecard_cookie` = '{$ecard_cookie}'," .
+                //"`eams_cookie`='{$new_cookies['eams']}' " .//eams.uestc.edu.cn子域
+                "WHERE `student_number`='{$_POST["username"]}'"
+            );
+        else
+            $db->query(
+                "INSERT INTO `user_info` (" .
+                "`student_number`,`token`,`idas_cookie`,`uestc_cookie`" .
+                //"`eams_cookie`,".
+                //"`ecard_cookie`".
+                ") VALUES ('{$_POST["username"]}','{$token_hash}','{$cookie_str}','{$iPlanetDirectoryPro}'" .
+                //"'{$new_cookies['eams']}',".
+                //"'{$ecard_cookie}'".
+                ")"
+            );
+        $ret_token = $token;
+
+        //eams登录
+        $new_cookies = eams_login($cookie_str, $iPlanetDirectoryPro);
+        if ($new_cookies == null) {
+            throw new Exception(err_msg(108, E_LOGIN), 108);
+        }
+        $status['eams'] = true;
+        if ($new_cookies['idas'] != '') {
+            preg_replace('/JSESSIONID\_ids\d\=.*;/', $new_cookies['idas'] . ';', $cookie_str);//idas改变
+        }
+        if ($new_cookies['iplan'] != '') {
+            $iPlanetDirectoryPro = $new_cookies['iplan'];
+        }
+        //数据库写入
+        if ($db->query(
+            "SELECT 1 FROM `user_info` WHERE `student_number`='{$_POST["username"]}' LIMIT 1")
+            ->fetch_all())
+            //存在，update
+            $db->query(
+                "UPDATE `user_info` SET " .
                 "`eams_cookie`='{$new_cookies['eams']}' " .//eams.uestc.edu.cn子域
                 "WHERE `student_number`='{$_POST["username"]}'"
             );
         else
             $db->query(
-                "INSERT INTO `user_info` (`student_number`,`token`,`idas_cookie`,`uestc_cookie`,`eams_cookie`,`ecard_cookie`) VALUES ('{$_POST["username"]}','{$token_hash}','{$cookie_str}','{$iPlanetDirectoryPro}','{$new_cookies['eams']}','{$ecard_cookie}')"
+                "INSERT INTO `user_info` (" .
+                "`eams_cookie`" .
+                ") VALUES (" .
+                "'{$new_cookies['eams']}'," .
+                ")"
             );
+        $ret_token = $token;
+
+
+        //ecard登录
+        $ecard_cookie = ecard_login($_POST['username'], $_POST['passwd']);
+        $status['ecard'] = true;
+        //数据库写入
+        if ($db->query(
+            "SELECT 1 FROM `user_info` WHERE `student_number`='{$_POST["username"]}' LIMIT 1")
+            ->fetch_all())
+            //存在，update
+            $db->query(
+                "UPDATE `user_info` SET " .
+                "`ecard_cookie` = '{$ecard_cookie}'" .
+                "WHERE `student_number`='{$_POST["username"]}'"
+            );
+        else
+            $db->query(
+                "INSERT INTO `user_info` (" .
+                "`ecard_cookie`" .
+                ") VALUES (" .
+                "'{$ecard_cookie}'" .
+                ")"
+            );
+        //$ret_token=$token;//暂时不需要
 
         //echo $token;
         echo json_encode(array(
@@ -236,15 +286,15 @@ try {
                 strpos($res['body'], '</span>', strpos($res['body'], 'id="msg"')) -
                 strpos($res['body'], '>', strpos($res['body'], 'id="msg"')) - 1);
             if ($msg == '您提供的用户名或者密码有误') {
-                throw new Exception('103');
+                throw new Exception(err_msg(103, E_LOGIN), 103);
             } elseif ($msg == '请输入验证码') {
-                throw new Exception('104');
+                throw new Exception(err_msg(104, E_LOGIN), 104);
             } elseif ($msg == '无效的验证码') {
-                throw new Exception('104');
+                throw new Exception(err_msg(104, E_LOGIN), 104);
             }
         } else
-            throw new Exception('105');
+            throw new Exception(err_msg(105, E_LOGIN), 105);
     }
 } catch (Exception $e) {
-    echo err((int)$e->getMessage(), $status);
+    echo err($e->getCode(), $status, $ret_token);
 }

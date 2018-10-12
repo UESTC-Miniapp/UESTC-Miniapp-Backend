@@ -9,9 +9,9 @@ function ecard_login($u, $p)
 {
     $res = get('http://ecard.uestc.edu.cn/');
     if ($res['status'] != 200) //一卡通网站不可用
-        throw new Exception('105');
+        throw new Exception(err_msg(109,E_LOGIN),109);
     if ($res['cookie']['COOKIE_SUPPORT'] != 'true' || !key_exists('JSESSIONID', $res['cookie']))
-        throw new Exception('105');
+        throw new Exception(err_msg(109,E_LOGIN),109);
     //preg_match_all('/<input.*?name=\"(.*?)\".value\=\"(.*?)\"/', $res['body'], $input_arr);
     $login_data = array(
         '_58_login_type' => '_58_login_type',
@@ -23,12 +23,12 @@ function ecard_login($u, $p)
         $login_data,
         'JSESSIONID=' . $res['cookie']['JSESSIONID='] . ';COOKIE_SUPPORT=true');
     if ($res2['status'] != 302)
-        throw new Exception('105');
+        throw new Exception(err_msg(109,E_LOGIN),109);
     if ($res2['header']['Location'][0] != 'http://ecard.uestc.edu.cn/web/guest/personal')
-        throw new Exception('103');
+        throw new Exception(err_msg(103,E_LOGIN),103);
     $cookie_str = 'JSESSIONID=' . $res2['cookie']['JSESSIONID'] . ';COOKIE_SUPPORT=true;GUEST_LANGUAGE_ID=zh_CN';
     $res3 = get('http://ecard.uestc.edu.cn/web/guest/personal', $cookie_str);
     if ($res3['status'] != 200)
-        throw new Exception('105');
+        throw new Exception(err_msg(109,E_LOGIN),109);
     return $cookie_str;
 }

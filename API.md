@@ -53,6 +53,9 @@
 105|后端系统错误|一般是数据库挂了或者学校网站升级
 106|请求错误|一般是没有username或者passwd
 107|token错误|这种情况最好是重新登录吧
+108|eams无法登录|
+109|ecard无法登录|
+110|idas无法登录|
 #### 检测token有效性 - `check_token.php` - `POST`
 用于确认token所属的cookie是否有效
 
