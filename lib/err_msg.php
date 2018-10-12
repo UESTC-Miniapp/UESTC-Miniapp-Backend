@@ -8,7 +8,7 @@ define('E_GRADE', 3);
 define('E_EXAM', 4);
 define('E_TT', 5);
 define('E_PERSON', 6);
-define('E_GEN',7);
+define('E_GEN', 7);
 
 function err_msg($code, $type)
 {
@@ -20,8 +20,7 @@ function err_msg($code, $type)
                 104 => 'wrong captcha',
                 105 => 'unknown error',
                 106 => 'bad request',
-                107 => 'wrong token',
-                108 => 'eams falied'
+                107 => 'wrong token'
             );
             break;
         case 2:

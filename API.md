@@ -36,8 +36,9 @@
   error_code: Number, // 在这里列举错误码
   error_msg: String, // 用于返回错误详情
   cap_img: String, // 可选，base64编码后的验证码图片，如果直接登录成功，该字段为空
-  token: String // 如果登录成功，则返回token，如果需要验证码，该字段为空
-  status:{ //网站状态
+  token: String // 如果登录成功，则返回token，如果需要验证码，依然有token
+  status:{ //网站状态，登录失败为全false
+    idas: Boolean, //统一登录验证
     eams: Boolean, //教务处
     ecard: Boolean //一卡通
   }
@@ -52,7 +53,6 @@
 105|后端系统错误|一般是数据库挂了或者学校网站升级
 106|请求错误|一般是没有username或者passwd
 107|token错误|这种情况最好是重新登录吧
-108|教务处登录失败|一般是学校教务处网站关闭或升级
 #### 检测token有效性 - `check_token.php` - `POST`
 用于确认token所属的cookie是否有效
 
