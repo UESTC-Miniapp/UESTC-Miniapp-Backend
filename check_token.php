@@ -10,7 +10,7 @@ require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/err_msg.php';
 require 'lib/check_eams.php';
 
-require 'for_debug/check_token-debug.php';
+//require 'for_debug/check_token-debug.php';
 
 function err($code)
 {
