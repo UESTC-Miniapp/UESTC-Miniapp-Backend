@@ -2,6 +2,10 @@
 这并不是readme，而是灌水用的日记。
 请不要指望在此找到任何有价值的内容。
 接口文档去看API.md。
+## 2018-10-28
+check_token出现迷之错误，
+get请求返回null，
+用postman则正常。
 ## 2018-10-12
 用Exception重写了login.php，
 有种优雅了许多的错觉。

@@ -5,6 +5,7 @@
 if (!require_once 'url.php')
     require 'url.php';
 
+//一般走到这一步的话，用户名和密码是不会有问题的
 function ecard_login($u, $p)
 {
     $res = get('http://ecard.uestc.edu.cn/');
@@ -25,7 +26,7 @@ function ecard_login($u, $p)
     if ($res2['status'] != 302)
         throw new Exception(err_msg(109,E_LOGIN),109);
     if ($res2['header']['Location'][0] != 'http://ecard.uestc.edu.cn/web/guest/personal')
-        throw new Exception(err_msg(103,E_LOGIN),103);
+        throw new Exception(err_msg(109,E_LOGIN),109);
     $cookie_str = 'JSESSIONID=' . $res2['cookie']['JSESSIONID'] . ';COOKIE_SUPPORT=true;GUEST_LANGUAGE_ID=zh_CN';
     $res3 = get('http://ecard.uestc.edu.cn/web/guest/personal', $cookie_str);
     if ($res3['status'] != 200)

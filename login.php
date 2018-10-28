@@ -28,12 +28,21 @@ function err($code, $s, $t)
             'status' => $s
         ));
     }
+    if ($code == 108 || $code == 109)
+        return json_encode(array(
+            'success' => true,
+            'error_code' => $code,
+            'error_msg' => err_msg($code, E_LOGIN),
+            'status' => $s,
+            'token' => $t
+        ));
     return json_encode(array(
-        'success' => ($code == 108 || $code == 109) ? true : false,
+        'success' => false,
         'error_code' => $code,
         'error_msg' => err_msg($code, E_LOGIN),
-        'status' => $s
+        'status' => $s,
     ));
+
 }
 
 $status = array(

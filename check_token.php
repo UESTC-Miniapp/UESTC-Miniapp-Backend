@@ -9,7 +9,8 @@ require 'lib/dbconf.php';//数据库相关
 require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/err_msg.php';
 require 'lib/check_eams.php';
-//require 'for_debug/check_token-debug.php';
+
+require 'for_debug/check_token-debug.php';
 
 function err($code)
 {
@@ -57,10 +58,22 @@ if ($cookie_arr && $cookie_arr[2] == hash('sha256',$_POST['token'])) {//没找�
     //$cookie_str = $cookie_arr[0].';'.$cookie_arr[1];
     //$res = get(URL,$cookie_str);
     $res_body = get(URL, $cookie_arr[0] . ';' . $cookie_arr[1], true)['body'];
+
+    //关于神奇现象
+    if($res_body){
+        echo json_encode(array(
+            'token_is_available' => false,
+            'success' => false,
+            'error_code' => 105,
+            'error_msg' => 'unknown error'
+        ));
+        exit;
+    }
+
     $html = new simple_html_dom();
     $html->load($res_body);
     $title = $html->find('title', 0);
-    if ($title->innertext() == '电子科技大学登录') {
+    if ($title->innerText() == '电子科技大学登录') {
         //echo err(201);
         echo json_encode(array(
             'token_is_available' => false,
