@@ -10,7 +10,7 @@ require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/err_msg.php';
 require 'lib/check_eams.php';
 
-//require 'for_debug/check_token-debug.php';
+require 'for_debug/check_token-debug.php';
 
 function err($code)
 {
@@ -60,7 +60,7 @@ if ($cookie_arr && $cookie_arr[2] == hash('sha256',$_POST['token'])) {//没找�
     $res_body = get(URL, $cookie_arr[0] . ';' . $cookie_arr[1], true)['body'];
 
     //关于神奇现象
-    if($res_body){
+    if(!$res_body){
         echo json_encode(array(
             'token_is_available' => false,
             'success' => false,
