@@ -2,6 +2,9 @@
 /**
  * 用于测试token对应的cookie是否还有效
  */
+//这文件没鸟用了，暂时
+echo "{\"success\":true}";
+exit;
 
 require 'lib/checkstr.php';
 require 'lib/url.php';
@@ -57,7 +60,9 @@ $cookie_arr = $db->query(
 if ($cookie_arr && $cookie_arr[2] == hash('sha256',$_POST['token'])) {//没找到||不一致
     //$cookie_str = $cookie_arr[0].';'.$cookie_arr[1];
     //$res = get(URL,$cookie_str);
-    $res_body = get(URL, $cookie_arr[0] . ';' . $cookie_arr[1], true)['body'];
+    $res_body = get(URL,
+        $cookie_arr[0] . ';' . $cookie_arr[1],
+        true)['body'];
 
     //关于神奇现象
     if(!$res_body){

@@ -91,6 +91,7 @@ function get($url, $cookie_str = '', $auto_follow = false)
     if ($auto_follow) {
         curl_setopt($ch, CURLOPT_AUTOREFERER, 1);//重定向自动设定referer
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);//自动重定向
+        curl_setopt($ch,CURLOPT_MAXREDIRS,30);//重定向30次！
     }
     //curl_setopt($ch,CURLOPT_HTTPHEADER,$headers);
     curl_setopt($ch, CURLOPT_HEADER, 1);

@@ -2,6 +2,19 @@
 这并不是readme，而是灌水用的日记。
 请不要指望在此找到任何有价值的内容。
 接口文档去看API.md。
+## 2018-10-29
+把check_token.php干了，
+现在当静态文件用，只返回
+```json
+{
+"success":true
+}
+
+```
+这个后期我会解决，
+另外就是下次准备用Guzzle重构，
+替换掉使用了url.php的部分。  
+原来*http for human*在php也是存在的！！
 ## 2018-10-28
 check_token出现迷之错误，
 get请求返回null，
@@ -293,9 +306,8 @@ http://eams.uestc.edu.cn/eams/courseTableForStd.action
 我在写这些文字的时候是203。
 ## 2018-08-19
 成绩信息里面，如果有重修的话，
-会有span标签。  
-用正则替换搞定了。
----
+会有span标签。  用正则替换搞定了。
+
 又双叒叕出bug了。
 如果有重修之类的数据，
 在成绩详细信息就会有9个项目，
@@ -309,18 +321,16 @@ http://eams.uestc.edu.cn/eams/courseTableForStd.action
 要处理的就是把补考给去掉就行。
 如果该科没有补考，那么那一项是空的。
 通过正则把td标签部分解析成数组之后，
-判断数组的长度，
-如果是9就直接扔掉第8位。
----
+判断数组的长度，如果是9就直接扔掉第8位。
+
 嘛，最终还是决定把补考加上。
 原因当然是比较方便改。
 ## 2018-08-17
 修复check_token.php。
 居然会有idas没过期，eams过期这种奇葩的情况。
 check_token.php是之前写的，
-当时还没有处理eams的情况。
-现在把eams的确认也加到check_token里面了。
----
+当时还没有处理eams的情况。现在把eams的确认也加到check_token里面了。
+
 学长果然是有做产品经理的潜力。
 成绩信息部分改为获取全部，
 几乎得重写，靠。  
@@ -329,9 +339,8 @@ check_token.php是之前写的，
 http://eams.uestc.edu.cn/eams/teach/grade/course/person!historyCourseGrade.action?projectType=MAJOR
 ```
 请求方式为POST，但是只提交一个  
-`projectType=MAJOR`  
-反正我是看不懂这是什么操作。
----
+`projectType=MAJOR`  反正我是看不懂这是什么操作。
+
 最终还是在后端解析，用了几次正则，
 把原来的那个全部注释了。
 虽然有git，但是恢复起来并不是十分方便，
@@ -340,12 +349,10 @@ http://eams.uestc.edu.cn/eams/teach/grade/course/person!historyCourseGrade.actio
 学校开放了eams，也就是教务处，
 现在理论上是可以登录的，
 然而小程序似乎还是不工作，
-不太清楚为什么，
-等老哥上线吧。
----
-同时修复了exam，grade等等的问题，
-login的时候塞入了明文token，已经修正。
----
+不太清楚为什么，等老哥上线吧。
+
+同时修复了exam，grade等等的问题，login的时候塞入了明文token，已经修正。
+
 小程序的问题似乎是没有POST数据，
 不确定是不是格式的问题，
 www-urlencoded或者form-data。
@@ -432,12 +439,10 @@ colspan="5"
 不知道最近又在约哪个妹子。
 
 ## 2018-08-01
-计算token那一段感觉需要再处理下，
-只计算一轮hash就可以了。
----
-另外就是目前token并没有防爆破，
-也没设置过期时间。
----
+计算token那一段感觉需要再处理下，只计算一轮hash就可以了。
+
+另外就是目前token并没有防爆破，也没设置过期时间。
+
 关于读取成绩信息，请求的URL为
 ```
 http://eams.uestc.edu.cn/eams/teach/grade/course/person!search.action?semesterId=xxx&projectType=&_=xxx
@@ -451,9 +456,8 @@ http://eams.uestc.edu.cn/eams/teach/grade/course/person!search.action?semesterId
 当然这个值是通过Set-Cookie获取的，
 所以我只能从经验来判断规律了。
 ---
-学长说他会把`semesterId`通过post提交上来，
-那我就不关心那玩意了。
----
+学长说他会把`semesterId`通过post提交上来，那我就不关心那玩意了。
+
 还有一种情况就是，读取默认学期。
 比如正常浏览的时候会发现，虽然有2018-2019学年第1学期，
 但是系统默认并不会跳转到那个位置，
@@ -464,9 +468,8 @@ http://eams.uestc.edu.cn/eams/teach/grade/course/person.action
 ```
 在不提交`semester.id`这个cookie的情况下，
 该URL的响应包含Set-Cookie。
-当然就是`semester.id`。
-它的值应该就是那个默认的学年学期。
----
+当然就是`semester.id`。它的值应该就是那个默认的学年学期。
+
 成绩查询模块开发完成。  
 眼睛有点累，老王又不陪我打球，唉。
 大概后期会放慢一些速度，
@@ -498,10 +501,9 @@ PHP的CURL虽然支持302自动跳转，
 用cookieJar的方式保存cookie等等。
 但那是后话了，目前这个虽然不怎么好用，
 但我个人觉得还是可以的。
----
 最近学了一点正则，
-修改了`url.php`中处理header字符串的方式。
----
+修改了`url.php`中处理header字符串的方式。  
+
 又出问题了，关于确认token有效的php。
 学校似乎加了防御，总之就是我用了这个URL做验证
 ```
@@ -512,9 +514,10 @@ http://idas.uestc.edu.cn/authserver/index.do
 然而现在发生的情况是会302跳转到某位置，然后再跳回来。
 好像就是为了验证爬虫有没有302跳转能力？我擦，搞笑呢？
 但是没办法，毕竟这不是我写的，我也改不了。
-好歹改起来不算麻烦，把get模式设置为自动跳转，
+好歹改起来不算麻烦，把get模式设置为自动跳转，  
+
 最后判断一下网页标题就OK。
----
+
 回到eams。
 网站有个三级域的cookie是`iPlanetDirectoryPro`。
 我个人是感觉这玩意没有什么卵用，
@@ -524,10 +527,12 @@ http://idas.uestc.edu.cn/authserver/index.do
 只是丢失的话会通过302再Set回来。
 最坑的是，服务器似乎也并不保存这么个玩意，
 因为每次Set-Cookie的值都不一样......  
+
 当然话是这么说，该加上去的还是加上去吧。
----
+
 重新理一下eams的登录获取cookie的过程。  
 首先eams有三个cookie，其中一个是三级域名
+
 - `iPlanetDirectoryPro`（这个是三级域名的）
 - `JSESSIONID`
 - `sto-id-20480`
