@@ -13,13 +13,12 @@
 203|无法连接教务处|等校方处理
 204|学号或密码错误|
 
-### 登录页
+### 登录 - `login.php` - `POST`  
 
 登录可以用于验证学号和密码。
 
-#### 登录 - `login.php` - `POST`  
-
 @request:  
+
 ```jsonc
 {
   username: String,
@@ -56,8 +55,9 @@
 108|eams无法登录|
 109|ecard无法登录|
 110|idas无法登录|
-#### 检测token有效性 - `check_token.php` - `POST`
-用于确认token所属的cookie是否有效
+### 检测token有效性 - `check_token.php` - `POST`
+
+用于确认token所属的cookie是否有效。
 
 @request:
 ```jsonc
@@ -76,8 +76,7 @@
   error_msg: String
 }
 ```
-#### 获取成绩信息 - `grade.php` - `POST`
-读取成绩信息需要提交学号、token和semesterId。
+### 获取成绩信息 - `grade.php` - `POST`
 
 @request:
 ```jsonc
@@ -128,8 +127,7 @@
 }
 ```
 
-#### 课程表 - `timetable.php` - `POST`
-获取课程表。
+### 课程表 - `timetable.php` - `POST`
 
 @request:
 ```jsonc
@@ -159,8 +157,7 @@
 }
 ```
 
-#### 考试信息 - `exam.php` - `POST`
-读取考试信息需要提交学号、token、semesterId、examTypeId。
+### 考试信息 - `exam.php` - `POST`
 
 @request:
 ```jsonc
@@ -192,8 +189,7 @@
   ]
 }
 ```
-#### 个人信息 - `person.php` - `POST`
-读取个人信息需要提交学号和token。
+### 个人信息 - `person.php` - `POST`
 
 @request:
 ```jsonc
@@ -221,7 +217,8 @@
   ]
 }
 ```
-#### 注册信息 - `person/enroll.php` - `POST`
+### 注册信息 - `person/enroll.php` - `POST`
+
 @request:
 ```jsonc
 {
@@ -245,8 +242,7 @@
 }
 ```
 
-#### 一卡通信息 - `ecard/info.php` - `POST`
-需要提供学号和token。
+### 一卡通信息 - `ecard/info.php` - `POST`
 
 @request:
 ```jsonc
@@ -271,8 +267,7 @@
   }
 }
 ```
-#### 消费趋势 - `ecard/stat.php` - `POST`
-需要提供学号和token。
+### 消费趋势 - `ecard/stat.php` - `POST`
 
 @request:
 ```jsonc
@@ -294,8 +289,7 @@
   ]
 }
 ```
-#### 消费地点 - `ecard/place.php` - `POST`
-需要提供学号和token。
+### 消费地点 - `ecard/place.php` - `POST`
 
 @request:
 ```jsonc
@@ -317,8 +311,7 @@
   ]
 }
 ```
-#### 充值趋势 - `ecard/charge.php` - `POST`
-需要提供学号和token。
+### 充值趋势 - `ecard/charge.php` - `POST`
 
 @request:
 ```jsonc
@@ -340,9 +333,9 @@
   ]
 }
 ```
-#### 交易流水 - `ecard/history.php` - `POST`
-需要提供学号、token、页数。  
-默认爬取180天的。
+### 交易流水 - `ecard/history.php` - `POST`
+
+默认爬取180天。
 
 @request:
 ```jsonc
