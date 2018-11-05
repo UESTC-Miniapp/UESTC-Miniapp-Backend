@@ -335,7 +335,7 @@
 ```
 ### 交易流水 - `ecard/history.php` - `POST`
 
-默认爬取180天。
+默认爬取180天的第一页。
 
 @request:
 ```jsonc
