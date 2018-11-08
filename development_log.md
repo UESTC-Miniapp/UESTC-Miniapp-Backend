@@ -3,6 +3,10 @@
 请不要指望在此找到任何有价值的内容。
 接口文档去看API.md。
 
+## 2018-11-08
+
+学校升级了统一验证页面，现在需要重写eams登录和idas登录。
+
 ## 2018-11-05
 
 稍微修改了下接口文档的格式，然后放到网站上。https://ch34k.xyz/docs/UESTC-Miniapp-Backend/API。
@@ -24,6 +28,7 @@
 check_token出现迷之错误，
 get请求返回null，
 用postman则正常。
+
 ## 2018-10-12
 用Exception重写了login.php，
 有种优雅了许多的错觉。
@@ -569,10 +574,11 @@ http://idas.uestc.edu.cn/authserver/index.do
 同样的URL带参数。这一过程中会设定几个cookie，
 ticket最后再302到原来的页面。
 
-##2018-07-27
+## 2018-07-27
 首先是登录时候提交的表单，
 表单一般分为form-data和x-www-urlencoded。
 学校登录的那个网站是
+
 ```
 http://idas.uestc.edu.cn/authserver/login
 ```
@@ -600,8 +606,10 @@ http://idas.uestc.edu.cn/authserver/login
 不同的域名提交不同的cookie也需要注意，
 cookieJar还是很有必要的（然而curl就是没有，你气不气？好怀念Python）。
 ### 验证码
+
 大概说一下验证码。
 是否需要验证码，可以通过一下链接来确定
+
 ```
 http://idas.uestc.edu.cn/authserver/needCaptcha.html
 ```

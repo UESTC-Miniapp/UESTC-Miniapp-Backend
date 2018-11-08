@@ -8,3 +8,4 @@ for_debug
 lib/dbconf.php
 lib/dblink.php
 log.php
+vendor
