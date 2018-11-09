@@ -12,6 +12,7 @@ require 'lib/checkstr.php';
 require 'lib/err_msg.php';
 require 'lib/eams_login.php';
 require 'lib/ecard_login.php';
+require 'vendor/autoload.php';
 
 //require 'for_debug.php';//方便调试的时候使用
 
@@ -68,13 +69,7 @@ try {
     }
 
 //数据库连接
-    $db = new mysqli();
-    $db->connect(
-        DB_HOST,
-        DB_USER,
-        DB_PASS,
-        DB_NAME,
-        DB_PORT);
+    $db = new mysqli(DB_HOST,DB_USER,DB_PASS,DB_NAME,DB_PORT);
     if ($db->connect_errno) {
         //echo '数据库连接失败:' . (string)$db->connect_errno;
         throw new Exception(err_msg(105, E_LOGIN), 105);
@@ -87,7 +82,8 @@ try {
 
 //URL
     define('URL', 'http://idas.uestc.edu.cn/authserver/login');
-    define('CapURL', 'http://idas.uestc.edu.cn/authserver/needCaptcha.html?username=' . $_POST['username'] . '&_=');
+    define('CapURL', 'http://idas.uestc.edu.cn/authserver/needCaptcha.html?username=' .
+        $_POST['username'] . '&_=');
     define('CapIMGURL', 'http://idas.uestc.edu.cn/authserver/captcha.html');
 
     $response = get(URL);
@@ -120,7 +116,7 @@ try {
     }
 
 //确定是否需要验证码
-    if (get(CapURL . (string)time() . '000')['body'] != "false\n") {//需要验证码
+    if (get(CapURL . (string)time() . '000')['body'] != "false\r\n") {//需要验证码
         if (!array_key_exists('cap', $_POST)) {//请求中不含验证码
             //cookie存入数据库，响应code=102,token,cap_img
             $token = hash('sha256',
@@ -248,7 +244,7 @@ try {
                 "INSERT INTO `user_info` (" .
                 "`eams_cookie`" .
                 ") VALUES (" .
-                "'{$new_cookies['eams']}'," .
+                "'{$new_cookies['eams']}'" .
                 ")"
             );
         $ret_token = $token;

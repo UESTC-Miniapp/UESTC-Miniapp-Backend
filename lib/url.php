@@ -45,10 +45,13 @@ function post($url, $data = array(), $cookie_str = '', $auto_follow = false)
             $key = substr($header_str, $pos1, $pos2 - $pos1);
             $value = substr($header_str, $pos2 + 2, $pos3 - $pos2 - 2);
 
-            if ($key == 'Set-Cookie') {//对cookie单独处理
+            if ($key == 'Set-Cookie' or //对cookie单独处理
+                $key == 'SET-COOKIE') {//学校的坑爹操作，临时修改
+                $key = 'Set-Cookie';//临时修改
+
                 $cookie_key = substr($value, 0, strpos($value, '='));//分离cookie的key
                 $cookie_value = substr($value, strpos($value, '=') + 1);
-                if (strpos($cookie_value, ';'))//只保留value部分
+                if (strpos($cookie_value, ';')!==false)//只保留value部分
                 {
                     $cookie_value = substr(
                         $cookie_value, 0, strpos($cookie_value, ';'));
@@ -91,7 +94,7 @@ function get($url, $cookie_str = '', $auto_follow = false)
     if ($auto_follow) {
         curl_setopt($ch, CURLOPT_AUTOREFERER, 1);//重定向自动设定referer
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);//自动重定向
-        curl_setopt($ch,CURLOPT_MAXREDIRS,30);//重定向30次！
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 30);//重定向30次！
     }
     //curl_setopt($ch,CURLOPT_HTTPHEADER,$headers);
     curl_setopt($ch, CURLOPT_HEADER, 1);
