@@ -33,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 }
 
 if (!(array_key_exists('username', $_POST) &&
-        array_key_exists('token', $_POST)) &&
-    array_key_exists('semesterId', $_POST)) {
+        array_key_exists('token', $_POST) &&
+    array_key_exists('semesterId', $_POST))) {
     echo err(203);
     exit;
 }
