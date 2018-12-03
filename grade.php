@@ -2,6 +2,7 @@
 /**
  * 读取成绩信息
  */
+header('Content-type: application/json');
 if (!require_once 'lib/url.php')
     require 'lib/url.php';
 if (!require_once 'lib/dbconf.php')

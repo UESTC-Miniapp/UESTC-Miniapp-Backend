@@ -11,7 +11,7 @@ require '../lib/check_eams.php';
 require '../lib/err_msg.php';
 
 //require '../for_debug.php';//仅用于调试
-
+header('Content-type: application/json');
 function err($code)
 {
     return json_encode(array(

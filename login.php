@@ -4,7 +4,7 @@
  * 本文件的请求使用POST，传递学号(username)和密码(passwd)
  * 响应1或者2，1=成功/2=失败
  */
-
+header('Content-type: application/json');
 require 'lib/url.php';
 require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/dbconf.php';

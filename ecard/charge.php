@@ -2,7 +2,7 @@
 /**
  * 充值地点
  */
-
+header('Content-type: application/json');
 require '../lib/url.php';
 require '../lib/checkstr.php';
 require '../lib/dbconf.php';

@@ -3,6 +3,7 @@
  * 用于测试token对应的cookie是否还有效
  */
 //这文件没鸟用了，暂时
+header('Content-type: application/json');
 echo "{\"success\":true}";
 exit;
 
