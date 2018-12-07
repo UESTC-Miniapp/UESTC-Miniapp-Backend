@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 }
 
 if (!(array_key_exists('username', $_POST) &&
-        array_key_exists('token', $_POST) &&
+    array_key_exists('token', $_POST) &&
     array_key_exists('semesterId', $_POST))) {
     echo err(203);
     exit;
@@ -75,10 +75,13 @@ if (!check_eams($cookie_str)) {
 }
 
 //请求课程表
-define('TT_URL', 'http://eams.uestc.edu.cn/eams/courseTableForStd!courseTable.action');
 //读取ids
 $res = get('http://eams.uestc.edu.cn/eams/courseTableForStd.action?_=' . (string)time() . '000',
     $cookie_str);
+if (strpos($res['body'], '!innerIndex'))//临时补丁
+    $res = get(
+        'http://eams.uestc.edu.cn/eams/courseTableForStd!innerIndex.action?_=' . (string)time() . '000',
+        $cookie_str);
 preg_match_all('/bg\.form\.addInput\(form\,\"ids\"\,\"(.*?)\"\)\;/', $res['body'], $result_arr);
 if (strlen($result_arr[1][0]) != 6) {//理论上应该是6位的，保守考虑
     echo err(202);
@@ -95,6 +98,11 @@ if ($_POST['semesterId'] == '') {//手动获取semesterId
     $res = get(
         'http://eams.uestc.edu.cn/eams/courseTableForStd.action?_=' . (string)time() . '000',
         $cookie_str);
+    if (strpos($res['body'], '!innerIndex'))//临时补丁
+        $res = get(
+            'http://eams.uestc.edu.cn/eams/courseTableForStd!innerIndex.action?_=' . (string)time() . '000',
+            $cookie_str);
+
     if ($res['status'] != 200) { //不是200的话不正常
         echo err(202);
         exit;
@@ -104,7 +112,10 @@ if ($_POST['semesterId'] == '') {//手动获取semesterId
 } else {
     $data['semester.id'] = $_POST['semesterId'];
 }
-$res = post(TT_URL, $data, $cookie_str);
+
+$res = post('http://eams.uestc.edu.cn/eams/courseTableForStd!courseTable.action',
+    $data, $cookie_str);
+
 if ($res['status'] != 200) {
     echo err(202);
     exit;

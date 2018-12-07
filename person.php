@@ -78,6 +78,11 @@ if (!check_eams($cookie_str)) {
 $res = get(
     'http://eams.uestc.edu.cn/eams/stdDetail.action?_=' . (string)time() . '000',
     $cookie_str);
+if (strpos($res['body'], '!innerIndex'))//临时补丁
+    $res = get(
+        'http://eams.uestc.edu.cn/eams/stdDetail!innerIndex.action?_=' . (string)time() . '000',
+        $cookie_str);
+
 if ($res['status'] != 200) {
     echo err(202);
     exit;
