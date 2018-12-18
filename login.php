@@ -146,117 +146,73 @@ try {
 //发送登录请求
     $res = post(URL, $data, $cookie_str);
 
-    if ($res['status'] == '302') {
-        $status['idas'] = true;
-        //print_r($res['cookie']);
-        //登录成功，继续登录eams，cookie写入数据库
-        $iPlanetDirectoryPro = '';
-        foreach ($res['cookie'] as $key => $value) {//提取cookie字符串
-            //iPlanetDirectoryPro单独处理
-            if ($key == 'iPlanetDirectoryPro') {
-                $iPlanetDirectoryPro = 'iPlanetDirectoryPro' . '=' . $value;
-                continue;
-            }
-            $cookie_str = $key . '=' . $value . ';' . $cookie_str;
-        }
-        //$new_loc = $res['head']['Location'];//暂时不需要处理302跳转
-        if (!$iPlanetDirectoryPro) {//如果没有这个cookie，估计是有问题的，为了稳定性
-            throw new Exception(err_msg(105, E_LOGIN), 105);
-        }
-
-        //生成token
-        $token = hash('sha256',
-            $cookie_str . (string)time() . $_POST['username'] . SALT);//生成token
-        $token_hash = hash('sha256', $token);
-
-        //检测数据库是否存在此学号
-        if ($db->query(
-            "SELECT 1 FROM `user_info` WHERE `student_number`='{$_POST["username"]}' LIMIT 1")
-            ->fetch_all())
-            //存在，update
-            $db->query(
-                "UPDATE `user_info` SET " .
-                "`idas_cookie`='{$cookie_str}'," .//idas.uestc.edu.cn子域
-                "`uestc_cookie`='{$iPlanetDirectoryPro}'," .//uestc.edu.cn主域
-                "`token`='{$token_hash}'" .
-                //"`ecard_cookie` = '{$ecard_cookie}'," .
-                //"`eams_cookie`='{$new_cookies['eams']}' " .//eams.uestc.edu.cn子域
-                "WHERE `student_number`='{$_POST["username"]}'"
-            );
-        else
-            $db->query(
-                "INSERT INTO `user_info` (" .
-                "`student_number`,`token`,`idas_cookie`,`uestc_cookie`" .
-                //"`eams_cookie`,".
-                //"`ecard_cookie`".
-                ") VALUES ('{$_POST["username"]}','{$token_hash}','{$cookie_str}','{$iPlanetDirectoryPro}'" .
-                //"'{$new_cookies['eams']}',".
-                //"'{$ecard_cookie}'".
-                ")"
-            );
-        $ret_token = $token;
-
-        //eams登录
-        $new_cookies = eams_login($cookie_str, $iPlanetDirectoryPro);
-        if ($new_cookies == null) {
-            throw new Exception(err_msg(108, E_LOGIN), 108);
-        }
-        $status['eams'] = true;
-        if ($new_cookies['idas'] != '') {
-            preg_replace('/JSESSIONID\_ids\d\=.*;/', $new_cookies['idas'] . ';', $cookie_str);//idas改变
-        }
-        if ($new_cookies['iplan'] != '') {
-            $iPlanetDirectoryPro = $new_cookies['iplan'];
-        }
-        //数据库写入
-        if ($db->query(
-            "SELECT 1 FROM `user_info` WHERE `student_number`='{$_POST["username"]}' LIMIT 1")
-            ->fetch_all())
-            //存在，update
-            $db->query(
-                "UPDATE `user_info` SET " .
-                "`eams_cookie`='{$new_cookies['eams']}' " .//eams.uestc.edu.cn子域
-                "WHERE `student_number`='{$_POST["username"]}'"
-            );
-        else
-            $db->query(
-                "INSERT INTO `user_info` (" .
-                "`eams_cookie`" .
-                ") VALUES (" .
-                "'{$new_cookies['eams']}'" .
-                ")"
-            );
-
-        $ret_token = $token;
-
-        if ($res['status'] != '302') {
-            //登录失败
-            if ($res['status'] == '200') {
-                //登录失败，密码错误或者需要验证码，读取cpatchaDiv
-
-                if (strpos($res['body'], 'id="msg"')) {//错误消息的提示
-                    //$pos1 = strpos($res['body'], 'id="msg"');
-                    //strpos($res['body'], '>', strpos($res['body'], 'id="msg"'));
-                    //这里有机会的话就重写一下吧，略难看
-                    $msg = substr($res['body'],
-                        strpos($res['body'], '>', strpos($res['body'], 'id="msg"')) + 1,
-                        strpos($res['body'], '</span>', strpos($res['body'], 'id="msg"')) -
-                        strpos($res['body'], '>', strpos($res['body'], 'id="msg"')) - 1);
+    if ($res['status'] != '302') {
+        //登录失败
+        if ($res['status'] == '200') {
+            //登录失败，密码错误或者需要验证码，读取cpatchaDiv
+            if (strpos($res['body'], 'id="msg"')) {//错误消息的提示
+                //$pos1 = strpos($res['body'], 'id="msg"');
+                //strpos($res['body'], '>', strpos($res['body'], 'id="msg"'));
+                //这里有机会的话就重写一下吧，略难看
+                $msg = substr($res['body'],
+                    strpos($res['body'], '>', strpos($res['body'], 'id="msg"')) + 1,
+                    strpos($res['body'], '</span>', strpos($res['body'], 'id="msg"')) -
+                    strpos($res['body'], '>', strpos($res['body'], 'id="msg"')) - 1);
 
 
-                    if ($msg == '您提供的用户名或者密码有误') {
-                        throw new UMBException(204);
-                    } elseif ($msg == '请输入验证码') {
-                        throw new UMBException(104);
-                    } elseif ($msg == '无效的验证码') {
-                        throw new UMBException(104);
-                    } else
-                        throw new UMBException(202);
+                if ($msg == '您提供的用户名或者密码有误') {
+                    throw new UMBException(204);
+                } elseif ($msg == '请输入验证码') {
+                    throw new UMBException(104);
+                } elseif ($msg == '无效的验证码') {
+                    throw new UMBException(104);
                 } else
                     throw new UMBException(202);
-            }
-        }
+            } else
+                throw new UMBException(202);
+        } else
+            throw new UMBException(202);
     }
+
+    $status['idas'] = true;
+    //print_r($res['cookie']);
+    //登录成功，继续登录eams，cookie写入数据库
+    $iPlanetDirectoryPro = '';
+    foreach ($res['cookie'] as $key => $value) {//提取cookie字符串
+        //iPlanetDirectoryPro单独处理
+        if ($key == 'iPlanetDirectoryPro') {
+            $iPlanetDirectoryPro = 'iPlanetDirectoryPro' . '=' . $value;
+            continue;
+        }
+        $cookie_str = $key . '=' . $value . ';' . $cookie_str;
+    }
+    //$new_loc = $res['head']['Location'];//暂时不需要处理302跳转
+    if (!$iPlanetDirectoryPro) {//如果没有这个cookie，估计是有问题的，为了稳定性
+        throw new UMBException(202);
+    }
+
+    //写入jwt
+    $token_json['cookie']['idas'] = $cookie_str;
+    $token_json['cookie']['uestc'] = $iPlanetDirectoryPro;
+
+    //eams登录
+    $new_cookies = eams_login($cookie_str, $iPlanetDirectoryPro);
+    if ($new_cookies == null) {
+        throw new UMBException(108);
+    }
+    $status['eams'] = true;
+    if ($new_cookies['idas'] != '') {
+        preg_replace('/JSESSIONID\_ids\d\=.*;/', $new_cookies['idas'] . ';', $cookie_str);//idas改变
+    }
+    if ($new_cookies['iplan'] != '') {
+        $iPlanetDirectoryPro = $new_cookies['iplan'];
+    }
+    //写入jwt
+    $token_json['cookie']['eams']=$new_cookies['eams'];
+
+    //响应
+
+
 } catch
 (UMBException $e) {
     if ($e->getCode() === 102)
