@@ -1,15 +1,11 @@
 <?php
 /**
- * 用于测试token对应的cookie是否还有效
+ * 用于测试token对应的cookie是否还有效，
+ * 包含idas;eams;ecard
  */
 
 header('Content-type: application/json');
 
-//这文件没鸟用了，暂时
-/*
-echo "{\"success\":true}";
-exit;
-*/
 require 'lib/checkstr.php';
 require 'lib/url.php';
 require 'lib/dbconf.php';//数据库相关
