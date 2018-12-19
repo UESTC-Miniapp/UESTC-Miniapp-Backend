@@ -3,6 +3,39 @@
 请不要指望在此找到任何有价值的内容。
 接口文档去看API.md。
 
+## 2018-12-19
+
+准备接入研究生系统，又要挖接口了。
+
+> 登录接口  
+>
+> 删除Cookie后可能导致需要重新设置密保，具体原因不明。
+>
+> 注意下面两个方法使用的密码可能是不同的，这里有疑问，具体等老哥答复。
+>
+> 方法一：使用独立登录页面，需要验证码
+>
+> 1. GET`http://yjsjy.uestc.edu.cn/pyxx/account/login`，获得一个Cookie，`JSESSIONID`
+> 2. 请求验证码，GET`http://yjsjy.uestc.edu.cn/pyxx/captcha/imageCode`
+> 3. 登录，POST`http://yjsjy.uestc.edu.cn/pyxx/account/logon`，带表单，四个键值对：
+>    - `targetUrl`=""
+>    - `username`="学号"
+>    - `password`="密码"
+>    - `captcha`="验证码"  
+> 4. 完成，如果跳转到`/pyxx/home/index`就是登录成功了，登录失败则是跳转到`/pyxx/account/login?error=x`，x为错误的类型：
+>    - 1=密码错误
+>    - 2=学号不存在
+>    - 3=验证码有误
+>    - 4=请先在迎新系统进行学院报道
+>
+> 方法二：使用统一登录(idas)，先登录`portal`，再登录`yjsjy`，不需要验证码。
+
+> 成绩接口：
+>
+> GET`http://yjsjy.uestc.edu.cn/pyxx/pygl/cjcx`
+
+>
+
 ## 2018-12-17
 
 打算先搞定JWT部分，顺便整理一下错误码。
