@@ -26,17 +26,18 @@ function jwt_check(string $token)
  * @throws UMBException
  * @author hzy
  * @return mixed
- * 使用base64编码，使用HMAC(sha256)签名
+ * 解析token
  */
 function jwt_decode(string $token)
 {
     if (jwt_check($token) === false)
         throw new UMBException(201);
     //解析JWT
+    $token = substr($token, 0, -64);
     $token = base64_decode($token, true);
     if ($token === false)
         throw new UMBException(201);
-    $token_arr = json_decode($token);
+    $token_arr = json_decode($token,true);
     if ($token_arr == null)
         throw new UMBException(201);
     return $token_arr;

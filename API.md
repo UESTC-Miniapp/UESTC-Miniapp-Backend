@@ -1,4 +1,4 @@
-# UESTC-Life API 接口文档
+# UESTC-Life API 文档
 
 1. 禁止返回值为空值，响应的请求里面最少要包括`success`，`error_code`，`error_msg`三个值，允许后两者为`null`；
 2. 区分响应值中的字符串和数字，不要使用字符串来传递数值型数据；

@@ -5,6 +5,8 @@
  * cookie使用JWT标准保存
  * JWT结构：
  * {
+ * username: String,
+ * stu_type: Number, //学生类别，1=本科生，2=格院，3=研究生
  * cookie:{
  *          idas: String,
  *          eams: String,
@@ -13,6 +15,8 @@
  * }
  */
 header('Content-type: application/json');
+
+require 'lib/exception.php';
 require 'lib/url.php';
 require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/dbconf.php';
@@ -21,51 +25,28 @@ require 'lib/err_msg.php';
 require 'lib/eams_login.php';
 require 'lib/ecard_login.php';
 require 'lib/jwt_parse.php';
-require 'lib/exception.php';
 
 require 'vendor/autoload.php';
-
-function err($code, $s, $t)
-{
-    if (!is_int($code)) {
-        return json_encode(array(
-            'success' => false,
-            'error_code' => 105,
-            'error_msg' => err_msg(105, E_LOGIN),
-            'token' => $t,
-            'status' => $s
-        ));
-    }
-    if ($code == 108 || $code == 109)
-        return json_encode(array(
-            'success' => true,
-            'error_code' => $code,
-            'error_msg' => err_msg($code, E_LOGIN),
-            'status' => $s,
-            'token' => $t
-        ));
-    return json_encode(array(
-        'success' => false,
-        'error_code' => $code,
-        'error_msg' => err_msg($code, E_LOGIN),
-        'status' => $s,
-    ));
-
-}
 
 $status = array(
     'idas' => false,
     'eams' => false,
     'ecard' => false
 );
-$ret_token = '';
+
 $token_json = [
+    'username' => '',
     'cookie' => []
 ];
 
 //log
 //file_put_contents('log.php', date('c') . ',' . $_SERVER['REMOTE_ADDR'] . ',' . "login,\n", FILE_APPEND);
 stdlog(",{$_SERVER['REMOTE_ADDR']},login");
+
+function master_login(string $u, string $p)
+{
+    global $status, $token_json;
+}
 
 try {
     if ($_SERVER['REQUEST_METHOD'] != 'POST') {
@@ -86,6 +67,17 @@ try {
     if (!check_username($_POST['username'])) {
         throw new UMBException(204);
     }
+    $token_json['username'] = $_POST['username'];
+    if (strlen($_POST['username']) === 12) {
+        $token_json['stu_type'] = 3;
+        //研究生登录通道
+        master_login($_POST['username'], $_POST['passwd']);
+        exit;
+    } else if (substr($token_json['username'], 4, 2) === '19')//格院
+        $token_json['stu_type'] = 2;
+    else
+        $token_json['stu_type'] = 1;
+
 
 //URL
     define('URL', 'http://idas.uestc.edu.cn/authserver/login');
@@ -115,11 +107,9 @@ try {
     if (get(CapURL . (string)time() . '000')['body'] != "false\r\n") {
         //需要验证码
         if (!array_key_exists('cap', $_POST)) {//请求中不含验证码
-            //cookie存入JWT，响应code=102,token,cap_img
+            //cookie存入JWT，抛异常
             $token_json['cookie']['idas'] = $cookie_str;
-            //响应
-            echo jwt_encode($token_json);
-            exit;
+            throw new UMBException(102);
         }
     }
 
@@ -151,9 +141,7 @@ try {
         if ($res['status'] == '200') {
             //登录失败，密码错误或者需要验证码，读取cpatchaDiv
             if (strpos($res['body'], 'id="msg"')) {//错误消息的提示
-                //$pos1 = strpos($res['body'], 'id="msg"');
-                //strpos($res['body'], '>', strpos($res['body'], 'id="msg"'));
-                //这里有机会的话就重写一下吧，略难看
+                //这里很丑，但是我忘了怎么改了
                 $msg = substr($res['body'],
                     strpos($res['body'], '>', strpos($res['body'], 'id="msg"')) + 1,
                     strpos($res['body'], '</span>', strpos($res['body'], 'id="msg"')) -
@@ -176,7 +164,7 @@ try {
 
     $status['idas'] = true;
     //print_r($res['cookie']);
-    //登录成功，继续登录eams，cookie写入数据库
+    //登录成功，继续登录eams，cookie写入jwt
     $iPlanetDirectoryPro = '';
     foreach ($res['cookie'] as $key => $value) {//提取cookie字符串
         //iPlanetDirectoryPro单独处理
@@ -208,11 +196,22 @@ try {
         $iPlanetDirectoryPro = $new_cookies['iplan'];
     }
     //写入jwt
-    $token_json['cookie']['eams']=$new_cookies['eams'];
+    $token_json['cookie']['eams'] = $new_cookies['eams'];
+
+    //登录ecard
+    $ecard_cookie = ecard_login($_POST['username'], $_POST['passwd']);
+    $status['ecard'] = true;
+    //写入jwt
+    $token_json['cookie']['ecard'] = $ecard_cookie;
 
     //响应
-
-
+    echo json_encode([
+        'success' => true,
+        'error_code' => null,
+        'error_msg' => '',
+        'token' => jwt_encode($token_json),
+        'status' => $status
+    ]);
 } catch
 (UMBException $e) {
     if ($e->getCode() === 102)
@@ -221,13 +220,17 @@ try {
             'success' => true,
             'error_code' => $e->getCode(),
             'error_msg' => $e->getMessage(),
-            //有点麻烦
+            'token' => jwt_encode($token_json),
+            'cap_img' => base64_encode(get(CapIMGURL, $token_json['cookie']['idas'])['body'])
         ]);
     else
+        //失败
         echo json_encode([
             'success' => false,
+            'error_code' => $e->getCode(),
+            'error_msg' => $e->getMessage(),
+            //'token' => jwt_encode($token_json),
+            'status' => $status
         ]);
 
-} catch (Exception $e) {
-    echo err($e->getCode(), $status, $ret_token);
 }

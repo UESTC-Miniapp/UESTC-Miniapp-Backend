@@ -42,7 +42,10 @@ class UMBException extends Exception
         205 => 'Database failed',
         206 => 'Bad request',
         102 => 'Need captcha',
-        104 => 'Wrong captcha'
+        104 => 'Wrong captcha',
+        108 => 'eams failed',
+        109 => 'ecard failed',
+        110 => 'idas failed'
 
     ];
 
