@@ -12,27 +12,23 @@ require 'lib/check_eams.php';
 require 'lib/jwt_parse.php';
 require 'lib/exception.php';
 
-stdlog(",{$_SERVER['REMOTE_ADDR']},exam");
+stdlog($_SERVER['REMOTE_ADDR'], 'exam');
 
 try {
     if ($_SERVER['REQUEST_METHOD'] != 'POST')
-        throw new UMBException(203);
+        throw new UMBException(206);
 
     if (!(
         array_key_exists('token', $_POST) &&
         array_key_exists('semesterId', $_POST) &&
         array_key_exists('examTypeId', $_POST)
     ))
-        throw new UMBException(203);
-
-    if (!jwt_check($_POST['token']))
-        throw new UMBException(201);
+        throw new UMBException(206);
 
     $jwt = jwt_decode($_POST['token']);
     $cookie_str = $jwt['cookie']['eams'] . ';' . $jwt['cookie']['idas'];
     if (!check_eams($cookie_str))
         throw new UMBException(201);
-
 //以上基本都是抄grade.php的，我觉得甚至可以写个函数
 
     if ($_POST['semesterId'] != '') {

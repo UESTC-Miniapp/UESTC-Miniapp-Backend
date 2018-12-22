@@ -3,15 +3,13 @@
  * 查成绩用的
  * html table转json
  */
-
-function t2j($table_str) //for grade.php
+/**
+ * @param string $table_str
+ * @return array
+ * @author hzy
+ */
+function t2j(string $table_str) //for grade.php
 {
-    /*
-    $table_str = str_replace("\n", '', $table_str);
-    $table_str = str_replace("\r", '', $table_str);
-    $table_str = str_replace(' ', '', $table_str);
-    $table_str = str_replace("\t", '', $table_str);
-    */
     $table_str = preg_replace('/(\n|\r|\t)/', '', $table_str);
     preg_match_all('/<tbody.*?>(.*?)<\/tbody>/', $table_str, $tbodys);
 
@@ -19,7 +17,11 @@ function t2j($table_str) //for grade.php
     preg_match_all('/<tr.*?>(.*?)<\/tr>/', $tbodys[1][0], $table_arr);
 
     //summary
-    preg_match_all('/<th.*?>(.*?)<\/th>/', $table_arr[1][4], $sum_arr);
+    foreach ($table_arr[1] as $key => $value){
+        if(strpos($value,'在校汇总'))
+            preg_match_all('/<th.*?>(.*?)<\/th>/',
+                $table_arr[1][$key], $sum_arr);
+    }
     $summary = array(
         'aver_gpa' => (float)str_replace(' ', '', $sum_arr[1][3]),
         'sum_point' => (float)str_replace(' ', '', $sum_arr[1][2]),
@@ -100,30 +102,6 @@ function t2j($table_str) //for grade.php
         'semester_summary' => $semester_summary,
         'detail' => $detail
     );
-
-    /*
-        $values = array();
-
-        foreach ($table_arr[0] as &$value) {
-            $value = str_replace('style=""', '', $value);
-            preg_match_all('/<td>.*?<\/td>/', $value, $value);
-            $pairs = array();
-            foreach ($value[0] as $key => &$vvalue) {
-                $vvalue = str_replace('<td>', '', $vvalue);
-                $vvalue = str_replace('</td>', '', $vvalue);
-                if ($key > 4) {//成绩格式化处理
-                    if (is_numeric($vvalue))//数字字符串，直接转
-                        $vvalue = (float)$vvalue;
-                    else {
-                        $vvalue = $grade_trans[$vvalue];
-                    }
-                }
-                $pairs[$key_arr[$key]] = $vvalue;
-            }
-            $values[] = $pairs;
-        }
-        return $values;
-    */
 }
 
 function t2jE($table_str)//for exam.php

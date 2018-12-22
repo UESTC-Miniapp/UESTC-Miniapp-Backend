@@ -9,6 +9,7 @@
  * stu_type: Number, //学生类别，1=本科生，2=格院，3=研究生
  * cookie:{
  *          idas: String,
+ *          uestc: String,
  *          eams: String,
  *          ecard: String
  *      }
@@ -16,15 +17,15 @@
  */
 header('Content-type: application/json');
 
-require 'lib/exception.php';
-require 'lib/url.php';
-require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/dbconf.php';
+require 'lib/url.php';
+require 'lib/exception.php';
+require 'lib/3rd_lib/simple_html_dom.php';
 require 'lib/checkstr.php';
-require 'lib/err_msg.php';
+require 'lib/jwt_parse.php';
 require 'lib/eams_login.php';
 require 'lib/ecard_login.php';
-require 'lib/jwt_parse.php';
+
 
 require 'vendor/autoload.php';
 
@@ -41,7 +42,7 @@ $token_json = [
 
 //log
 //file_put_contents('log.php', date('c') . ',' . $_SERVER['REMOTE_ADDR'] . ',' . "login,\n", FILE_APPEND);
-stdlog(",{$_SERVER['REMOTE_ADDR']},login");
+stdlog($_SERVER['REMOTE_ADDR'], 'login');
 
 function master_login(string $u, string $p)
 {

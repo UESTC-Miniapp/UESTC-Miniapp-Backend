@@ -6,21 +6,20 @@ header('Content-type: application/json');
 
 require 'lib/url.php';
 require 'lib/dbconf.php';
+require 'lib/jwt_parse.php';
+require 'lib/exception.php';
 require 'lib/checkstr.php';
 require 'lib/table2json.php';
 require 'lib/check_eams.php';
-require 'lib/jwt_parse.php';
-require 'lib/exception.php';
 
-stdlog(",{$_SERVER['REMOTE_ADDR']},grade");
+stdlog($_SERVER['REMOTE_ADDR'], 'grade');
 
 try {
     if ($_SERVER['REQUEST_METHOD'] != 'POST')
-        throw new UMBException(203);
+        throw new UMBException(206);
 
-    if (!(array_key_exists('username', $_POST) &&
-        array_key_exists('token', $_POST)))
-        throw new UMBException(203);
+    if (!array_key_exists('token', $_POST))
+        throw new UMBException(206);
 
     if (!jwt_check($_POST['token']))
         throw new UMBException(201);
@@ -33,10 +32,8 @@ try {
     $res = get(
         'http://eams.uestc.edu.cn/eams/teach/grade/course/person!historyCourseGrade.action?projectType=MAJOR',
         $cookie_str);
-    if ($res['status'] != 200) {
-        echo err(202);
-        exit;
-    }
+    if ($res['status'] != 200)
+        throw new UMBException(202);
 
     echo json_encode([
         'success' => true,
