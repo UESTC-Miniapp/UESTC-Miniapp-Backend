@@ -14,6 +14,8 @@ require 'lib/check_eams.php';
 require 'lib/jwt_parse.php';
 require 'lib/exception.php';
 
+require 'vendor/autoload.php';
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
@@ -32,11 +34,6 @@ try {
 
     define('URL', 'http://idas.uestc.edu.cn/authserver/index.do');
 //检测是否发生302跳转
-
-    $cookie_arr = $db->query(
-        "SELECT `idas_cookie`,`uestc_cookie`,`token`,`eams_cookie`,`ecard_cookie` FROM `user_info` WHERE `student_number`='{$_POST["username"]}'"
-    )->fetch_all()[0];
-
     //改用guzzle
     try {
         $res = $client->request('GET', URL, [
@@ -59,10 +56,8 @@ try {
     if (!$res_body)
         throw new UMBException(202);
 
-    $html = new simple_html_dom();
-    $html->load($res_body);
-    $title = $html->find('title', 0);
-    if ($title->innerText() == '电子科技大学登录') {
+    preg_match('/<title>(.*?)<\/title>/', $res_body, $title);
+    if ($title[1] !== '统一身份认证') {
         //echo err(201);
         echo json_encode(array(
             'token_is_available' => false,

@@ -16,7 +16,7 @@ function check_eams($cookie_str)
 {
     $res = get('http://eams.uestc.edu.cn/eams/home!submenus.action?menu.id=', $cookie_str, true)['body'];
     preg_match('/<title>(.*?)<\/title>/', $res, $titles);
-    if ($titles[1] == '电子科技大学登录')
+    if ($titles[1] !== '')//空标题，十分魔性
         return false;
     else
         return true;
