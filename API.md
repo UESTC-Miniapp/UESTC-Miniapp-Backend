@@ -3,6 +3,7 @@
 1. 禁止返回值为空值，响应的请求里面最少要包括`success`，`error_code`，`error_msg`三个值，允许后两者为`null`；
 2. 区分响应值中的字符串和数字，不要使用字符串来传递数值型数据；
 3. 如无特殊说明，所有请求返回值均为`JSON`。
+4. 所有的请求都使用kv对，而不是json。
 ### 统一错误码
 除特别指定的外，以此表为准。
 
@@ -60,7 +61,6 @@
 @request:
 ```jsonc
 {
-  username: String, // 学号
   token: String // 用于校验的token
 }
 ```
@@ -80,7 +80,6 @@
 ```jsonc
 {
   token: String,
-  username: String // 不需要提供semesterId数据，直接返回所有学期的成绩即可
 }
 ```
 
@@ -161,7 +160,6 @@
 ```jsonc
 {
   token: String,
-  username: String,
   semesterId: String, // 学年代号，为空时默认返回最近学年成绩信息
   examTypeId: Number // 考试类型，1. 期末考试 2. 期中考试 3. 补考 4. 缓考
 }
@@ -192,8 +190,7 @@
 @request:
 ```jsonc
 {
-  token: String,
-  username: String
+  token: String
 }
 ```
 @return:
@@ -220,8 +217,7 @@
 @request:
 ```jsonc
 {
-  token: String,
-  username: String
+  token: String
 }
 ```
 @return:
@@ -245,8 +241,7 @@
 @request:
 ```jsonc
 {
-  token: String,
-  username: String
+  token: String
 }
 ```
 @return:
@@ -270,8 +265,7 @@
 @request:
 ```jsonc
 {
-  token: String,
-  username: String
+  token: String
 }
 ```
 @return:
@@ -292,8 +286,7 @@
 @request:
 ```jsonc
 {
-  token: String,
-  username: String
+  token: String
 }
 ```
 @return:
@@ -314,8 +307,7 @@
 @request:
 ```jsonc
 {
-  token: String,
-  username: String
+  token: String
 }
 ```
 @return:
@@ -338,8 +330,7 @@
 @request:
 ```jsonc
 {
-  token: String,
-  username: String,
+  token: String
   page: Number, //页数
   date_range: Number, //查询时间,7|30|60|180
   type: Number //交易类型,2=消费|1=充值|3=易支付电控
