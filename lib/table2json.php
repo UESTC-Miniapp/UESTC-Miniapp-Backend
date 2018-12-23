@@ -1,8 +1,8 @@
 <?php
 /**
- * 查成绩用的
- * html table转json
+ * 各种html table转json
  */
+
 /**
  * @param string $table_str
  * @return array
@@ -17,8 +17,8 @@ function t2j(string $table_str) //for grade.php
     preg_match_all('/<tr.*?>(.*?)<\/tr>/', $tbodys[1][0], $table_arr);
 
     //summary
-    foreach ($table_arr[1] as $key => $value){
-        if(strpos($value,'在校汇总'))
+    foreach ($table_arr[1] as $key => $value) {
+        if (strpos($value, '在校汇总'))
             preg_match_all('/<th.*?>(.*?)<\/th>/',
                 $table_arr[1][$key], $sum_arr);
     }
@@ -188,7 +188,13 @@ function t2jP($table_str)
     );
 }
 
-function t2jH($table_str)
+/**
+ * @param string
+ * @return array
+ * ecard_history
+ * 18-12-23:修复返回负值
+ */
+function t2jH(string $table_str)
 {
     preg_match_all("/<tr>([\s\S]*?)<\/tr>/", $table_str, $table_arr);
     //第一行数据为标题，需要略去
@@ -224,7 +230,7 @@ function t2jH($table_str)
             if ($kkey < 2)
                 $tmp_arr[$key_name[$kkey]] = (int)$vvalue;
             else if ($kkey > 2)
-                $tmp_arr[$key_name[$kkey]] = (float)$vvalue;
+                $tmp_arr[$key_name[$kkey]] = abs((float)$vvalue);
             else
                 $tmp_arr[$key_name[$kkey]] = $vvalue;
         }
