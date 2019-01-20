@@ -29,6 +29,11 @@ require 'lib/ecard_login.php';
 
 require 'vendor/autoload.php';
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Cookie\CookieJar;
+
 $status = array(
     'idas' => false,
     'eams' => false,
@@ -200,7 +205,7 @@ try {
     $token_json['cookie']['eams'] = $new_cookies['eams'];
 
     //登录ecard
-    $ecard_cookie = ecard_login($_POST['username'], $_POST['passwd']);
+    $ecard_cookie = ecard_login($_POST['username'], $_POST['passwd'], $token_json);
     $status['ecard'] = true;
     //写入jwt
     $token_json['cookie']['ecard'] = $ecard_cookie;
