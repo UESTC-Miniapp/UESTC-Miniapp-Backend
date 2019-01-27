@@ -2,13 +2,21 @@
 /*
  * ©hzy
  * 用于简单的发送http请求，支持GET/POST，
- * POST时，$data参数应为Array
+ * $data参数为Array
  * 使用Cookie时可以添加到第三个参数，使用字符串，多个cookie使用分号连接
- * 返回值为数组，包括head,body,cookie,status
- *
- * 目前这个库有无法分别域名cookie的bug，同时不支持302跳转
+ * 返回值为数组或bool，包括head,body,cookie,status
+ * 使用Chrome的User-Agent
+ * 没有使用cookieJar所以不支持多域名，自动跳转不建议开启
  */
-function post($url, $data = array(), $cookie_str = '', $auto_follow = false)
+
+/**
+ * @param string $url
+ * @param array $data
+ * @param string $cookie_str
+ * @param bool $auto_follow
+ * @return array|null
+ */
+function post(string $url, array $data = array(), string $cookie_str = '', bool $auto_follow = false)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_POST, 1);//method=post
@@ -23,6 +31,7 @@ function post($url, $data = array(), $cookie_str = '', $auto_follow = false)
     curl_setopt($ch, CURLOPT_HEADER, 1);    //response header
     curl_setopt($ch, CURLOPT_NOBODY, 0); //response body
     curl_setopt($ch, CURLOPT_COOKIE, $cookie_str);//cookie
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36');
     //curl_setopt($ch,CURLOPT_HTTPHEADER,$headers);
     $output = curl_exec($ch);
     if (!$output) {
@@ -51,7 +60,7 @@ function post($url, $data = array(), $cookie_str = '', $auto_follow = false)
 
                 $cookie_key = substr($value, 0, strpos($value, '='));//分离cookie的key
                 $cookie_value = substr($value, strpos($value, '=') + 1);
-                if (strpos($cookie_value, ';')!==false)//只保留value部分
+                if (strpos($cookie_value, ';') !== false)//只保留value部分
                 {
                     $cookie_value = substr(
                         $cookie_value, 0, strpos($cookie_value, ';'));
@@ -86,7 +95,13 @@ function post($url, $data = array(), $cookie_str = '', $auto_follow = false)
     return null;
 }
 
-function get($url, $cookie_str = '', $auto_follow = false)
+/**
+ * @param string $url
+ * @param string $cookie_str
+ * @param bool $auto_follow
+ * @return array|null
+ */
+function get(string $url, string $cookie_str = '', bool $auto_follow = false)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -100,6 +115,8 @@ function get($url, $cookie_str = '', $auto_follow = false)
     curl_setopt($ch, CURLOPT_HEADER, 1);
     curl_setopt($ch, CURLOPT_NOBODY, 0);
     curl_setopt($ch, CURLOPT_COOKIE, $cookie_str);//cookie
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36');
+
 
     $output = curl_exec($ch);
     if (!$output) {
@@ -109,28 +126,6 @@ function get($url, $cookie_str = '', $auto_follow = false)
     if (curl_getinfo($ch, CURLINFO_HTTP_CODE) != '404') {
         $header_str = substr($output, 0, curl_getinfo($ch, CURLINFO_HEADER_SIZE));
         $header_str = preg_replace("/HTTP\/1\.\d\s[1-5]\d\d\s\w{1,6}\r\n/", '', $header_str);
-        /*
-                $header_arr1 = explode("\r\n\r\n", $header_str);
-                //$header_str = substr($header_str, strpos($header_str, "\r\n"));
-                $header_arr = array();
-                foreach ($header_arr1 as $key => $value) {
-                    if ($value == '')
-                        unset($header_arr1[$key]);
-                    else
-                        $header_arr[] = explode("\r\n", $value);
-                    //$header_arr[]='';
-                }
-                $headers = array();
-                foreach ($header_arr as $keys => $values) {
-                    $headers[] = array();
-                    foreach ($values as $key => $value) {
-                        //unset($headers[$keys][$key]);
-                        $kname = substr($value, 0, strpos($value, ':'));
-                        $vname = substr($value, strpos($value, ':') + 1);
-                        $headers[$keys][$kname] = $vname;
-                    }
-                }
-        */
 
         $header = array();//header中的key-value读取到array
         $cookie_array = array();

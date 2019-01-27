@@ -88,11 +88,11 @@ try {
 //URL
     define('URL', 'http://idas.uestc.edu.cn/authserver/login');
     define('CapURL', 'http://idas.uestc.edu.cn/authserver/needCaptcha.html?username=' .
-        $_POST['username'] . '&_=');
+        $_POST['username'] . '&pwdEncrypt2=pwdEncryptSalt&_=');
     define('CapIMGURL', 'http://idas.uestc.edu.cn/authserver/captcha.html');
 
     $response = get(URL);
-    if ($response == null) {
+    if ($response === null) {
         throw new UMBException(203);
     }
 
@@ -110,7 +110,7 @@ try {
     }
 
 //确定是否需要验证码
-    if (get(CapURL . (string)time() . '000')['body'] != "false\r\n") {
+    if (strpos(get(CapURL . (string)time() . '000')['body'], 'false') === false) {
         //需要验证码
         if (!array_key_exists('cap', $_POST)) {//请求中不含验证码
             //cookie存入JWT，抛异常
@@ -121,19 +121,27 @@ try {
 
     //不知道需不需要，需要应该也能登录的吧
 
+    //2019-01-27更新，添加密码加密配合新的idas
+    preg_match('/pwdDefaultEncryptSalt\s\=\s\\"(.*?)\\"\;/', $response['body'], $secret);
+    //加密密码字符串，适应idas接口
+    $passwd = openssl_encrypt(
+        str_repeat('fuckidas', 8) . $_POST['passwd'],
+        'AES-128-CBC',
+        $secret[1], 0, str_repeat('fuckidas', 2));
+
     //装载html，准备POST数据，shd挺稳定的，暂时不用正则了
     $html = new simple_html_dom();
     $html->load($response['body']);
     $input = $html->find('input');//读取所有输入框
-    $data = array(
+    $data = [
         'username' => $_POST['username'],
-        'password' => $_POST['passwd'],
-        $input[2]->name => $input[2]->value,
+        'password' => $passwd,
         $input[3]->name => $input[3]->value,
         $input[4]->name => $input[4]->value,
         $input[5]->name => $input[5]->value,
-        $input[6]->name => $input[6]->value
-    );
+        $input[6]->name => $input[6]->value,
+        $input[7]->name => $input[7]->value
+    ];
 
     //带验证码登录，已经从数据库加载cookie_str，在$data中添加验证码
     if (array_key_exists('cap', $_POST))
@@ -142,9 +150,9 @@ try {
 //发送登录请求
     $res = post(URL, $data, $cookie_str);
 
-    if ($res['status'] != '302') {
+    if ($res['status'] !== 302) {
         //登录失败
-        if ($res['status'] == '200') {
+        if ($res['status'] === 200) {
             //登录失败，密码错误或者需要验证码，读取cpatchaDiv
             if (strpos($res['body'], 'id="msg"')) {//错误消息的提示
                 //这里很丑，但是我忘了怎么改了
