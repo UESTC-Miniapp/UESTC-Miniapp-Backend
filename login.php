@@ -121,14 +121,17 @@ try {
 
     //不知道需不需要，需要应该也能登录的吧
 
+    //2019-02-28更新，学校似乎又移除前端加密这个东西了
     //2019-01-27更新，添加密码加密配合新的idas
+    /*
     preg_match('/pwdDefaultEncryptSalt\s\=\s\\"(.*?)\\"\;/', $response['body'], $secret);
     //加密密码字符串，适应idas接口
     $passwd = openssl_encrypt(
         str_repeat('fuckidas', 8) . $_POST['passwd'],
         'AES-128-CBC',
         $secret[1], 0, str_repeat('fuckidas', 2));
-
+    */
+    $passwd = $_POST['passwd'];
     //装载html，准备POST数据，shd挺稳定的，暂时不用正则了
     $html = new simple_html_dom();
     $html->load($response['body']);
@@ -140,7 +143,7 @@ try {
         $input[4]->name => $input[4]->value,
         $input[5]->name => $input[5]->value,
         $input[6]->name => $input[6]->value,
-        $input[7]->name => $input[7]->value
+        $input[2]->name => $input[2]->value
     ];
 
     //带验证码登录，已经从数据库加载cookie_str，在$data中添加验证码
@@ -148,7 +151,7 @@ try {
         $data['captchaResponse'] = $_POST['cap'];
 
 //发送登录请求
-    $res = post(URL, $data, $cookie_str);
+    $res = post(URL . ';jsessionid=' . $response['cookie']['JSESSIONID'], $data, $cookie_str);
 
     if ($res['status'] !== 302) {
         //登录失败
