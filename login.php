@@ -17,17 +17,16 @@
  */
 header('Content-type: application/json');
 
-require 'lib/dbconf.php';
-require 'lib/url.php';
-require 'lib/exception.php';
-require 'lib/3rd_lib/simple_html_dom.php';
-require 'lib/checkstr.php';
-require 'lib/jwt_parse.php';
-require 'lib/eams_login.php';
-require 'lib/ecard_login.php';
+require_once __DIR__ . '/lib/dbconf.php';
+require_once __DIR__ . '/lib/url.php';
+require_once __DIR__ . '/lib/exception.php';
+require_once __DIR__ . '/lib/3rd_lib/simple_html_dom.php';
+require_once __DIR__ . '/lib/checkstr.php';
+require_once __DIR__ . '/lib/jwt_parse.php';
+require_once __DIR__ . '/lib/eams_login.php';
+require_once __DIR__ . '/lib/ecard_login.php';
 
-
-require 'vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -121,17 +120,18 @@ try {
 
     //不知道需不需要，需要应该也能登录的吧
 
+    //2019-03-18更新，学校似乎又加上这玩意了。。。
     //2019-02-28更新，学校似乎又移除前端加密这个东西了
     //2019-01-27更新，添加密码加密配合新的idas
-    /*
+
     preg_match('/pwdDefaultEncryptSalt\s\=\s\\"(.*?)\\"\;/', $response['body'], $secret);
     //加密密码字符串，适应idas接口
     $passwd = openssl_encrypt(
         str_repeat('fuckidas', 8) . $_POST['passwd'],
         'AES-128-CBC',
         $secret[1], 0, str_repeat('fuckidas', 2));
-    */
-    $passwd = $_POST['passwd'];
+
+    //$passwd = $_POST['passwd'];
     //装载html，准备POST数据，shd挺稳定的，暂时不用正则了
     $html = new simple_html_dom();
     $html->load($response['body']);
@@ -143,7 +143,7 @@ try {
         $input[4]->name => $input[4]->value,
         $input[5]->name => $input[5]->value,
         $input[6]->name => $input[6]->value,
-        $input[2]->name => $input[2]->value
+        $input[7]->name => $input[7]->value
     ];
 
     //带验证码登录，已经从数据库加载cookie_str，在$data中添加验证码

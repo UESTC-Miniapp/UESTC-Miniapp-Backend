@@ -1,5 +1,7 @@
 {
     "require": {
+        "ext-mysqli": "*",
+        "ext-openssl": "*",
         "guzzlehttp/guzzle": "^6.3"
     }
 }
