@@ -2,11 +2,15 @@
 /**
  * 数据库配置文件
  */
+//databse
 define('DB_HOST', 'p:example.com');
-define('DB_PORT', '3306');//默认是3306
-define('DB_USER', 'db_user');
-define('DB_PASS', 'db_pass');
-define('DB_NAME', 'db_name');
+define('DB_PORT', '3306');
+define('DB_USER', 'put your database username here');
+define('DB_PASS', 'put your database password here');
+define('DB_NAME', 'put your database name here');
 
 //hash盐
-define('SALT', 'JAKHkjjahkjkjahkjndkKJASNKnjkhdk87y8ig723');
+define('SALT', 'put your hash salt here');
+
+//hmac密钥
+define('SECRET','put your hmac secret here');
