@@ -3,8 +3,7 @@
  * 确认ecard_cookie有效性
  */
 
-if(!require_once 'url.php')
-    require 'url.php';
+require_once __DIR__ . '/url.php';
 
 function check_ecard($ecard_cookie)
 {

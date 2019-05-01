@@ -2,10 +2,9 @@
 /**
  * 一卡通登录
  */
-if (!require_once 'url.php')
-    require 'url.php';
-if (!require_once 'exception.php')
-    require 'exception.php';
+
+require __DIR__ . '/url.php';
+require __DIR__ . '/exception.php';
 
 //一般走到这一步的话，用户名和密码是不会有问题的
 //修改登录方案，从统一验证跳转过去，使用Guzzel

@@ -85,10 +85,10 @@ try {
 
 
 //URL
-    define('URL', 'http://idas.uestc.edu.cn/authserver/login');
-    define('CapURL', 'http://idas.uestc.edu.cn/authserver/needCaptcha.html?username=' .
+    define('URL', 'https://idas.uestc.edu.cn/authserver/login');
+    define('CapURL', 'https://idas.uestc.edu.cn/authserver/needCaptcha.html?username=' .
         $_POST['username'] . '&pwdEncrypt2=pwdEncryptSalt&_=');
-    define('CapIMGURL', 'http://idas.uestc.edu.cn/authserver/captcha.html');
+    define('CapIMGURL', 'https://idas.uestc.edu.cn/authserver/captcha.html');
 
     $response = get(URL);
     if ($response === null) {
@@ -180,7 +180,6 @@ try {
     }
 
     $status['idas'] = true;
-    //print_r($res['cookie']);
     //登录成功，继续登录eams，cookie写入jwt
     $iPlanetDirectoryPro = '';
     foreach ($res['cookie'] as $key => $value) {//提取cookie字符串
@@ -191,7 +190,7 @@ try {
         }
         $cookie_str = $key . '=' . $value . ';' . $cookie_str;
     }
-    //$new_loc = $res['head']['Location'];//暂时不需要处理302跳转
+
     if (!$iPlanetDirectoryPro) {//如果没有这个cookie，估计是有问题的，为了稳定性
         throw new UMBException(202);
     }

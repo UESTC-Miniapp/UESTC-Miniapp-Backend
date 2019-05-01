@@ -4,14 +4,10 @@
  * 理论上应该不是允许请求的
  * 需要idas的cookie，用于登录统一验证
  */
-if(!require_once 'url.php')
-    require 'url.php';
-if(!require_once '3rd_lib/simple_html_dom.php')
-    require '3rd_lib/simple_html_dom.php';
-if(!require_once 'dbconf.php')
-    require 'dbconf.php';
-if(!require_once 'checkstr.php')
-    require 'checkstr.php';
+
+require_once __DIR__ . '/url.php';
+require_once __DIR__ . '/dbconf.php';
+require_once __DIR__ . '/checkstr.php';
 
 function eams_login($idas_cookie, $uestc_cookie)
 {
@@ -22,11 +18,12 @@ function eams_login($idas_cookie, $uestc_cookie)
     //http://idas.uestc.edu.cn/authserver/login?service=http%3A%2F%2Feams.uestc.edu.cn%2Feams%2Fhome%21submenus.action%3Fmenu.id%3D
     //不过还是为了以防万一吧
     $url2 = $res['header']['Location'][0];
+    //url2修改为https
+    $url2 = preg_replace('/^http/', 'https', $url2, 1);
     //登录这里的时候使用参数中的idas_cookie
     $res2 = get($url2, $idas_cookie . ';' . $uestc_cookie);
     if ($res2['status'] != 302)
         return null;
-    //$idas_n_c = $res2['cookie']['JSESSIONID_ids1']
     $url3 = $res2['header']['Location'][0];//带ticket参数的那个
     $cookie3 = 'sto-id-20480=' . $res['cookie']['sto-id-20480'] . ';' . $uestc_cookie;
     $res3 = get($url3, $cookie3);
@@ -36,7 +33,7 @@ function eams_login($idas_cookie, $uestc_cookie)
     //从url4中已经可以读取到JSESSIONID了
     preg_match('/jsessionid=(.*)$/', $url4, $jsid_arr);
     $cookie_str = 'sto-id-20480=' . $res['cookie']['sto-id-20480'] . ';' .
-        str_replace('jsessionid','JSESSIONID',$jsid_arr[0]);
+        str_replace('jsessionid', 'JSESSIONID', $jsid_arr[0]);
     //激活（？）
     $res4 = get($url4, $cookie_str);
     if ($res4['status'] != 200)

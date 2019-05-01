@@ -6,13 +6,13 @@
 
 header('Content-type: application/json');
 
-require 'lib/url.php';
-require 'lib/dbconf.php';
-require 'lib/checkstr.php';
-require 'lib/table2json.php';
-require 'lib/check_eams.php';
-require 'lib/jwt_parse.php';
-require 'lib/exception.php';
+require_once __DIR__ . '/lib/url.php';
+require_once __DIR__ . '/lib/dbconf.php';
+require_once __DIR__ . '/lib/checkstr.php';
+require_once __DIR__ . '/lib/table2json.php';
+require_once __DIR__ . '/lib/check_eams.php';
+require_once __DIR__ . '/lib/jwt_parse.php';
+require_once __DIR__ . '/lib/exception.php';
 
 require 'vendor/autoload.php';
 

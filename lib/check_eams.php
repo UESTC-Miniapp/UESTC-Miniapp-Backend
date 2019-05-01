@@ -3,14 +3,9 @@
  * 用于验证eams的有效性
  */
 
-if (!require_once 'url.php')
-    require 'url.php';
-if (!require_once '3rd_lib/simple_html_dom.php')
-    require '3rd_lib/simple_html_dom.php';
-if (!require_once 'dbconf.php')
-    require 'dbconf.php';
-if (!require_once 'checkstr.php')
-    require 'checkstr.php';
+require_once __DIR__ . '/url.php';
+require_once __DIR__ . '/dbconf.php';
+require_once __DIR__ . '/checkstr.php';
 
 function check_eams($cookie_str)
 {
