@@ -3,6 +3,7 @@
     "ext-mysqli": "*",
     "ext-openssl": "*",
     "ext-json": "*",
+    "ext-curl": "*",
     "guzzlehttp/guzzle": "^6.3"
   }
 }
